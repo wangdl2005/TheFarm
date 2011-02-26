@@ -36,6 +36,7 @@ namespace MyFarm
         JsonObject _friends; //好友列表
         JsonObject _friendsFliter;//可操作好友列表
         JsonObject _bagStatus;//用户背包信息
+        JsonObject _repertoryStatus;// 用户仓库信息
         List<Mature> _matureList = new List<Mature>();//成熟列表
         string showId = "";//当前显示农场的用户ID
         string uIdx = "";//登录用户ID
@@ -63,6 +64,7 @@ namespace MyFarm
         bool _autoSeed = true; //自动购买种子
         bool _autoBag = true; //查看背包
         bool _autoDog = true;
+        bool _autoCancel = true;//无经验自动取消除草。。
 
         bool _autoUserInfoBool = false;//用户信息刷新是否自动执行
         int timeUserInfoGo = 0;//用户信息刷新经过时间
@@ -95,6 +97,7 @@ namespace MyFarm
         #region 页面打开和关闭
         private void FrmFarm_Load(object sender, EventArgs e)
         {
+            configRead();
             configApply();
             /*
             //读取_shop信息
@@ -654,6 +657,50 @@ namespace MyFarm
             {
                 toLog(except.Message);
                 toLog("可摘取好友信息获取失败");
+            }
+        }
+        #endregion
+
+        #region 获取仓库信息
+        private void GetRepertoryInfo()
+        {
+            string url = runUrl + "/bbs/source/plugin/qqfarm/core/mync.php?mod=repertory&act=getUserCrop";
+           //uIdx=188880&uinY=198880&farmTime=1298276786&farmKey=262c0f6d7598f7f0a7c655767d3021bb
+            string farmTime = FarmKey.GetFarmTime();
+            string farmKey = FarmKey.GetFarmKey(farmTime, farmKeyEncodeString);
+            string postData = "uIdx=" + uIdx + "&uinY=" + uinY + "&farmTime=" + farmTime + "&farmKey=" + farmKey;
+            try
+            {
+                string content = HttpChinese.GetHtml(postData, cookie, url);
+                _repertoryStatus = new JsonObject(content); 
+                toLog("获取仓库信息成功");
+            }
+            catch (Exception except)
+            {
+                toLog(except.Message);
+                toLog("获取仓库信息失败");
+            }
+        }
+        #endregion
+
+        #region 卖掉仓库物品
+        //cids为欲卖掉的物品id集合，如：2,3
+        private void SellProducts(string cids)
+        {
+            string farmTime = FarmKey.GetFarmTime();
+            string farmKey = FarmKey.GetFarmKey(farmTime, farmKeyEncodeString);
+            string url = runUrl + "/bbs/source/plugin/qqfarm/core/mync.php?mod=repertory&act=saleAll";
+            string postData = "farmTime=" + farmTime + "&cIds=" + HttpUtility.UrlEncode(cids)
+                + "&onlineTime=0&farmKey=" + farmKey + "&uId=" + uIdx + "&uIdx=" + uIdx + "&uinY=" + uinY;
+            try
+            {
+                string content = HttpChinese.GetHtml(postData, cookie, url);
+                toLog("卖掉仓库物品成功" + "，获得" + new JsonObject(content).GetValue("money") + "金币");
+            }
+            catch(Exception except)
+            {
+                toLog(except.Message);
+                toLog("卖掉仓库物品失败");
             }
         }
         #endregion
@@ -1597,7 +1644,15 @@ namespace MyFarm
                 for (int i = 0; i < numWeed; i++)
                 {
                     result = ClearWeed(m.userId, m.place.ToString());
-                    if (result.Contains("\"farmlandIndex\":" + m.place.ToString()))
+                    DoResult doResultItem = new DoResult(result);
+                    if (_autoCancel && doResultItem.exp.Equals("0"))
+                    {
+                        _autoWorm = false;
+                        _autoWeed = false;
+                        _autoWater = false;
+                        toLog("无经验自动取消除草等操作");
+                    }
+                    else if (result.Contains("\"farmlandIndex\":" + m.place.ToString()))
                     {
                         toLog("除掉" + m.userName + "的农场的第" + m.place.ToString() + "号地的草成功");
                         saveAch(0, 1, 0, m.cId, "0");
@@ -1613,7 +1668,15 @@ namespace MyFarm
                 for (int i = 0; i < numWorm; i++)
                 {
                     result = Spraying(m.userId, m.place.ToString());
-                    if (result.Contains("\"farmlandIndex\":" + m.place.ToString()))
+                    DoResult doResultItem = new DoResult(result);
+                    if (_autoCancel && doResultItem.exp.Equals("0"))
+                    {
+                        _autoWorm = false;
+                        _autoWeed = false;
+                        _autoWater = false;
+                        toLog("无经验自动取消除草等操作");
+                    }
+                    else if (result.Contains("\"farmlandIndex\":" + m.place.ToString()))
                     {
                         toLog("除掉" + m.userName + "的农场的第" + m.place.ToString() + "号地的虫子成功");
                         saveAch(0, 0, 1, m.cId, "0");
@@ -1627,7 +1690,15 @@ namespace MyFarm
             if (_autoWater && isDry.Equals("Yes"))
             {
                 result = Water(m.userId, m.place.ToString());
-                if (result.Contains("\"farmlandIndex\":" + m.place.ToString()))
+                DoResult doResultItem = new DoResult(result);
+                if (_autoCancel && doResultItem.exp.Equals("0"))
+                {
+                    _autoWorm = false;
+                    _autoWeed = false;
+                    _autoWater = false;
+                    toLog("无经验自动取消除草等操作");
+                }
+                else if (result.Contains("\"farmlandIndex\":" + m.place.ToString()))
                 {
                     toLog("对" + m.userName + "的农场的第" + m.place.ToString() + "号地浇水成功");
                     saveAch(1, 0, 0, m.cId, "0");
@@ -1941,6 +2012,76 @@ namespace MyFarm
         #endregion
         #endregion
 
+        #region 仓库信息操作
+        #region 显示仓库物品
+        private void ShowRepertory()
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                listViewRepertory.Items.Clear();
+            });
+            DataTable dt = new DataTable();
+            DataRow dr;
+            dt.Columns.Add("id", typeof(String));
+            dt.Columns.Add("cId", typeof(String));
+            dt.Columns.Add("cName", typeof(String));
+            dt.Columns.Add("cMoney", typeof(String));
+            dt.Columns.Add("cNum", typeof(String));
+            //dt.Columns.Add("canDoStatus",typeof(String));
+            dt.Columns.Add("totalMoney", typeof(String));
+            dt.Columns.Add("isLock", typeof(String));
+            dt.Columns.Add("lastTime", typeof(String));
+            //这里只显示作物   
+            JsonObject crop = new JsonObject(_repertoryStatus.GetValue("crop"));
+            for (int i = 0; i < crop.GetCollection().Count; i++)
+            {
+                string cid = crop.GetCollection()[i].GetValue("cId");
+                string cNum = crop.GetCollection()[i].GetValue("amount");
+                string isLocked = crop.GetCollection()[i].GetValue("isLock").Equals("0") ? "否" : "是";//0:默认无锁，1加锁，难以判断
+                CropItem newCropItem = new CropItem(GetCropModel(cid));
+                string cName = newCropItem.cName;
+                string cMoney = newCropItem.priceOnSale;
+                long totalMoney = Convert.ToInt32(cNum) * Convert.ToInt32(cMoney);
+                dr = dt.NewRow();
+                dr[0] = (i + 1).ToString();
+                dr[1] = cid;
+                dr[2] = cName;
+                dr[3] = cMoney;
+                dr[4] = cNum;
+                dr[5] = totalMoney;
+                dr[6] = isLocked;
+                dr[7] = DateTime.Now.ToString();
+
+                dt.Rows.Add(dr);
+            }
+            int iSize = (dt.Rows.Count > 1000) ? 1000 : dt.Rows.Count;
+
+            ListViewItem lvi;
+            ListViewItem[] lvitems = new ListViewItem[iSize];
+            for (int i = 0; i < iSize; i++)
+            {
+                lvi = new ListViewItem(new string[] { dt.Rows[i][0].ToString(), dt.Rows[i][1].ToString(), dt.Rows[i][2].ToString(), dt.Rows[i][3].ToString(), dt.Rows[i][4].ToString(), dt.Rows[i][5].ToString(), dt.Rows[i][6].ToString(), dt.Rows[i][7].ToString() });
+                lvitems[i] = lvi;
+            }
+            this.Invoke((MethodInvoker)delegate
+            {
+                listViewRepertory.Items.AddRange(lvitems);
+            });
+        }
+        #endregion
+
+        #region 出售仓库未锁定物品
+        #endregion
+
+        #region 仓库信息
+        private void GetRepertoryInfoThread()
+        {
+            GetRepertoryInfo();
+            ShowRepertory();
+        }
+        #endregion 
+        #endregion
+
         #region 日志、状态栏信息操作
         #region 处理日志
         private void toLog(string msg)
@@ -2004,11 +2145,12 @@ namespace MyFarm
                 _autoSeed = Convert.ToBoolean(configDict["自动购买种子"]);
                 _autoBag = Convert.ToBoolean(configDict["查看背包"]);
                 _autoDog = Convert.ToBoolean(configDict["自动防狗"]);
+                _autoCancel = Convert.ToBoolean(configDict["无经验自动取消除草等操作"]);
                 farmKeyEncodeString = configDict["farmKeyEncodeString"];
             }
             catch (Exception except)
             {
-                throw except;
+                toLog(except.Message);
             }
         }
         private void configSave()
@@ -2059,6 +2201,7 @@ namespace MyFarm
                 configDict.Add("自动防狗", _autoDog.ToString());
                 configDict.Add("farmKeyEncodeString", farmKeyEncodeString);
                 configDict.Add("获取可操作好友时间间隔",timeGetFriendsFilter.ToString());
+                configDict.Add("无经验自动取消除草等操作", _autoCancel.ToString());
                 string value = "";
                 foreach (string key in configDict.Keys)
                 { 
@@ -2088,6 +2231,7 @@ namespace MyFarm
             _autoSeed = chbSeed.Checked; //自动购买种子
             _autoBag = chbBag.Checked; //查看背包
             _autoDog = chbDog.Checked;//自动防狗
+            _autoCancel = chbCancel.Checked;
         }
         private void configShow()
         {
@@ -2129,6 +2273,7 @@ namespace MyFarm
             chbSeed.Checked = _autoSeed;
             chbBag.Checked = _autoBag;
             chbDog.Checked = _autoDog;
+            chbCancel.Checked = _autoCancel;
             toLog("当前farmkey加密字符串为" + farmKeyEncodeString);
         }
         #endregion
@@ -2159,7 +2304,21 @@ namespace MyFarm
             toLog("获取" + userName + "土地信息成功" );
             toStatus("当前显示农场为：" + userName + "的农场");
         }
-                
+
+
+        private void listViewRepertory_DoubleClick(object sender, EventArgs e)
+        {
+            //获得当前行 
+            int iRowCurr = this.listViewRepertory.SelectedItems[0].Index;
+            //取得当前行的数据 
+            string cid = listViewRepertory.SelectedItems[0].SubItems[1].Text;
+            string cName = listViewRepertory.SelectedItems[0].SubItems[2].Text;
+            SellProducts(cid);
+            GetRepertoryInfo();
+            ShowRepertory();
+            toLog("出售" + cName + "成功");
+        }
+
         private void lbtnGetMatureList_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             if (lbtnGetMatureList.Text.Trim().Equals("获取成熟列表"))
@@ -2380,6 +2539,13 @@ namespace MyFarm
             Thread threadSaveMatureList = new Thread(new ThreadStart(MatureListSave));
             threadSaveMatureList.Start();
         }
+
+
+        private void lbtnGetRepertory_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Thread threadGetRepertory = new Thread(new ThreadStart(GetRepertoryInfoThread));
+            threadGetRepertory.Start();
+        }
         #endregion
 
         #region timer事件
@@ -2500,12 +2666,6 @@ namespace MyFarm
             }
         }
         #endregion
-
-       
-
-        
-
-        
 
         
     }    

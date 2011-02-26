@@ -129,6 +129,9 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.lbtnGetFriends = new System.Windows.Forms.LinkLabel();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.lbtnSaveMatureList = new System.Windows.Forms.LinkLabel();
+            this.ltbnReadMatureList = new System.Windows.Forms.LinkLabel();
+            this.lbtnRefreshMatureList = new System.Windows.Forms.LinkLabel();
             this.lbtnGetMatureList = new System.Windows.Forms.LinkLabel();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.lbtnGetFriendsFilter = new System.Windows.Forms.LinkLabel();
@@ -140,13 +143,22 @@
             this.columnHeader26 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader27 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader28 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.lbtnGetRepertory = new System.Windows.Forms.LinkLabel();
+            this.lbtnSellUnlocked = new System.Windows.Forms.LinkLabel();
+            this.listViewRepertory = new System.Windows.Forms.ListView();
+            this.columnHeader29 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader30 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader31 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader32 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader33 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader34 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader35 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader36 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.timer3 = new System.Windows.Forms.Timer(this.components);
             this.timer4 = new System.Windows.Forms.Timer(this.components);
-            this.lbtnRefreshMatureList = new System.Windows.Forms.LinkLabel();
-            this.ltbnReadMatureList = new System.Windows.Forms.LinkLabel();
-            this.lbtnSaveMatureList = new System.Windows.Forms.LinkLabel();
             this.groupBox3.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -161,6 +173,7 @@
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.tabPage4.SuspendLayout();
             this.SuspendLayout();
             // 
             // label7
@@ -1082,6 +1095,7 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Location = new System.Drawing.Point(21, 176);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -1125,6 +1139,39 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "成熟列表";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // lbtnSaveMatureList
+            // 
+            this.lbtnSaveMatureList.AutoSize = true;
+            this.lbtnSaveMatureList.Location = new System.Drawing.Point(332, 2);
+            this.lbtnSaveMatureList.Name = "lbtnSaveMatureList";
+            this.lbtnSaveMatureList.Size = new System.Drawing.Size(77, 12);
+            this.lbtnSaveMatureList.TabIndex = 4;
+            this.lbtnSaveMatureList.TabStop = true;
+            this.lbtnSaveMatureList.Text = "保存成熟列表";
+            this.lbtnSaveMatureList.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbtnSaveMatureList_LinkClicked);
+            // 
+            // ltbnReadMatureList
+            // 
+            this.ltbnReadMatureList.AutoSize = true;
+            this.ltbnReadMatureList.Location = new System.Drawing.Point(239, 2);
+            this.ltbnReadMatureList.Name = "ltbnReadMatureList";
+            this.ltbnReadMatureList.Size = new System.Drawing.Size(77, 12);
+            this.ltbnReadMatureList.TabIndex = 3;
+            this.ltbnReadMatureList.TabStop = true;
+            this.ltbnReadMatureList.Text = "读取成熟列表";
+            this.ltbnReadMatureList.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.ltbnReadMatureList_LinkClicked);
+            // 
+            // lbtnRefreshMatureList
+            // 
+            this.lbtnRefreshMatureList.AutoSize = true;
+            this.lbtnRefreshMatureList.Location = new System.Drawing.Point(415, 2);
+            this.lbtnRefreshMatureList.Name = "lbtnRefreshMatureList";
+            this.lbtnRefreshMatureList.Size = new System.Drawing.Size(77, 12);
+            this.lbtnRefreshMatureList.TabIndex = 2;
+            this.lbtnRefreshMatureList.TabStop = true;
+            this.lbtnRefreshMatureList.Text = "成熟列表刷新";
+            this.lbtnRefreshMatureList.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbtnRefreshMatureList_LinkClicked);
             // 
             // lbtnGetMatureList
             // 
@@ -1215,6 +1262,104 @@
             this.columnHeader28.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.columnHeader28.Width = 150;
             // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.lbtnGetRepertory);
+            this.tabPage4.Controls.Add(this.lbtnSellUnlocked);
+            this.tabPage4.Controls.Add(this.listViewRepertory);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Size = new System.Drawing.Size(587, 306);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "我的仓库";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // lbtnGetRepertory
+            // 
+            this.lbtnGetRepertory.AutoSize = true;
+            this.lbtnGetRepertory.Location = new System.Drawing.Point(468, 6);
+            this.lbtnGetRepertory.Name = "lbtnGetRepertory";
+            this.lbtnGetRepertory.Size = new System.Drawing.Size(77, 12);
+            this.lbtnGetRepertory.TabIndex = 2;
+            this.lbtnGetRepertory.TabStop = true;
+            this.lbtnGetRepertory.Text = "获取仓库信息";
+            this.lbtnGetRepertory.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbtnGetRepertory_LinkClicked);
+            // 
+            // lbtnSellUnlocked
+            // 
+            this.lbtnSellUnlocked.AutoSize = true;
+            this.lbtnSellUnlocked.Location = new System.Drawing.Point(240, 6);
+            this.lbtnSellUnlocked.Name = "lbtnSellUnlocked";
+            this.lbtnSellUnlocked.Size = new System.Drawing.Size(173, 12);
+            this.lbtnSellUnlocked.TabIndex = 1;
+            this.lbtnSellUnlocked.TabStop = true;
+            this.lbtnSellUnlocked.Text = "出售未锁定的作物（双击卖出）";
+            // 
+            // listViewRepertory
+            // 
+            this.listViewRepertory.AllowColumnReorder = true;
+            this.listViewRepertory.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader29,
+            this.columnHeader30,
+            this.columnHeader31,
+            this.columnHeader32,
+            this.columnHeader33,
+            this.columnHeader34,
+            this.columnHeader35,
+            this.columnHeader36});
+            this.listViewRepertory.FullRowSelect = true;
+            this.listViewRepertory.GridLines = true;
+            this.listViewRepertory.Location = new System.Drawing.Point(6, 21);
+            this.listViewRepertory.Name = "listViewRepertory";
+            this.listViewRepertory.Size = new System.Drawing.Size(558, 265);
+            this.listViewRepertory.TabIndex = 0;
+            this.listViewRepertory.UseCompatibleStateImageBehavior = false;
+            this.listViewRepertory.View = System.Windows.Forms.View.Details;
+            this.listViewRepertory.DoubleClick += new System.EventHandler(this.listViewRepertory_DoubleClick);
+            // 
+            // columnHeader29
+            // 
+            this.columnHeader29.Text = "序号";
+            this.columnHeader29.Width = 40;
+            // 
+            // columnHeader30
+            // 
+            this.columnHeader30.Text = "作物ID";
+            this.columnHeader30.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // columnHeader31
+            // 
+            this.columnHeader31.Text = "作物名";
+            this.columnHeader31.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader31.Width = 80;
+            // 
+            // columnHeader32
+            // 
+            this.columnHeader32.Text = "价格";
+            this.columnHeader32.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // columnHeader33
+            // 
+            this.columnHeader33.Text = "数量";
+            this.columnHeader33.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // columnHeader34
+            // 
+            this.columnHeader34.Text = "总值";
+            this.columnHeader34.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader34.Width = 70;
+            // 
+            // columnHeader35
+            // 
+            this.columnHeader35.Text = "是否锁定";
+            this.columnHeader35.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // columnHeader36
+            // 
+            this.columnHeader36.Text = "最后更新时间";
+            this.columnHeader36.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader36.Width = 120;
+            // 
             // timer1
             // 
             this.timer1.Interval = 1000;
@@ -1234,39 +1379,6 @@
             // 
             this.timer4.Interval = 1000;
             this.timer4.Tick += new System.EventHandler(this.timer4_Tick);
-            // 
-            // lbtnRefreshMatureList
-            // 
-            this.lbtnRefreshMatureList.AutoSize = true;
-            this.lbtnRefreshMatureList.Location = new System.Drawing.Point(415, 2);
-            this.lbtnRefreshMatureList.Name = "lbtnRefreshMatureList";
-            this.lbtnRefreshMatureList.Size = new System.Drawing.Size(77, 12);
-            this.lbtnRefreshMatureList.TabIndex = 2;
-            this.lbtnRefreshMatureList.TabStop = true;
-            this.lbtnRefreshMatureList.Text = "成熟列表刷新";
-            this.lbtnRefreshMatureList.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbtnRefreshMatureList_LinkClicked);
-            // 
-            // ltbnReadMatureList
-            // 
-            this.ltbnReadMatureList.AutoSize = true;
-            this.ltbnReadMatureList.Location = new System.Drawing.Point(239, 2);
-            this.ltbnReadMatureList.Name = "ltbnReadMatureList";
-            this.ltbnReadMatureList.Size = new System.Drawing.Size(77, 12);
-            this.ltbnReadMatureList.TabIndex = 3;
-            this.ltbnReadMatureList.TabStop = true;
-            this.ltbnReadMatureList.Text = "读取成熟列表";
-            this.ltbnReadMatureList.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.ltbnReadMatureList_LinkClicked);
-            // 
-            // lbtnSaveMatureList
-            // 
-            this.lbtnSaveMatureList.AutoSize = true;
-            this.lbtnSaveMatureList.Location = new System.Drawing.Point(332, 2);
-            this.lbtnSaveMatureList.Name = "lbtnSaveMatureList";
-            this.lbtnSaveMatureList.Size = new System.Drawing.Size(77, 12);
-            this.lbtnSaveMatureList.TabIndex = 4;
-            this.lbtnSaveMatureList.TabStop = true;
-            this.lbtnSaveMatureList.Text = "保存成熟列表";
-            this.lbtnSaveMatureList.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbtnSaveMatureList_LinkClicked);
             // 
             // FrmFarm
             // 
@@ -1306,6 +1418,8 @@
             this.tabPage2.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1430,5 +1544,17 @@
         private System.Windows.Forms.LinkLabel lbtnRefreshMatureList;
         private System.Windows.Forms.LinkLabel ltbnReadMatureList;
         private System.Windows.Forms.LinkLabel lbtnSaveMatureList;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.ListView listViewRepertory;
+        private System.Windows.Forms.ColumnHeader columnHeader29;
+        private System.Windows.Forms.ColumnHeader columnHeader30;
+        private System.Windows.Forms.ColumnHeader columnHeader31;
+        private System.Windows.Forms.ColumnHeader columnHeader32;
+        private System.Windows.Forms.ColumnHeader columnHeader33;
+        private System.Windows.Forms.ColumnHeader columnHeader34;
+        private System.Windows.Forms.LinkLabel lbtnGetRepertory;
+        private System.Windows.Forms.LinkLabel lbtnSellUnlocked;
+        private System.Windows.Forms.ColumnHeader columnHeader35;
+        private System.Windows.Forms.ColumnHeader columnHeader36;
     }
 }
