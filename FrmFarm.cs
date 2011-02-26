@@ -181,13 +181,13 @@ namespace MyFarm
         /// <returns></returns> 
         private string Scarify(string uid, string place)
         {
-            string farmtime = FarmKey.GetFarmTime();
+            string farmtime = TheKey.GetFarmTime();
             string url = runUrl + "/bbs/source/plugin/qqfarm/core/mync.php?mod=farmlandstatus&act=scarify";
             User _friendInfo = new User(GetUserModel(uid));
             string tName = _friendInfo.userName;
             string postData = "cropStatus=7&fName=" + HttpUtility.UrlEncode(uName) + "&farmTime=" + farmtime
                 + "&tName=" + HttpUtility.UrlEncode(tName) + "&uIdx=" + uIdx + "&uinY=" + uinY + "farmKey="
-                + FarmKey.GetFarmKey(farmtime, farmKeyEncodeString) + "&ownerId=" + uid + "&place=" + place;
+                + TheKey.GetFarmKey(farmtime, farmKeyEncodeString) + "&ownerId=" + uid + "&place=" + place;
             string result = "";
             try
             {
@@ -209,14 +209,14 @@ namespace MyFarm
         /// <returns></returns> 
         private string Harvest(string uid, string place)
         {
-            string farmtime = FarmKey.GetFarmTime();
+            string farmtime = TheKey.GetFarmTime();
             User _friendInfo = new User(GetUserModel(uid));
             string tName = _friendInfo.userName;
             string url = runUrl + "/bbs/source/plugin/qqfarm/core/mync.php?mod=farmlandstatus&act=harvest";
             //string post = "farmKey=" + GetFarmKey(farmtime) + "&place=" + HttpUtility.UrlEncode(place) + "&ownerId=" + _uid + "&farmTime=" + farmtime;
             string postData = "uIdx=" + uIdx + "&fName=" + HttpUtility.UrlEncode(uName) + "&farmTime="
                 + farmtime + "&tName=" + HttpUtility.UrlEncode(tName) + "&uinY=" + uinY + "&farmKey="
-                + FarmKey.GetFarmKey(farmtime, farmKeyEncodeString) + "&ownerId=" + uid + "&place=" + place;
+                + TheKey.GetFarmKey(farmtime, farmKeyEncodeString) + "&ownerId=" + uid + "&place=" + place;
             string result = "";
             try
             {
@@ -238,7 +238,7 @@ namespace MyFarm
         /// uinX=53197&ownerId=43197&fName=%E7%8E%8B%E7%A3%8A&uinY=29991&place=3&uIdx=19991&tName=%E5%91%A8%E5%B2%B3%E7%BF%B0&farmKey=ce1f1ff65fae4437940dd617489421c8&farmTime=1298283128        
         private string Steal(string uid, string place)
         {
-            string farmtime = FarmKey.GetFarmTime();
+            string farmtime = TheKey.GetFarmTime();
             User _friendInfo = new User(GetUserModel(uid));
             string tName = _friendInfo.userName;
             string uinX = _friendInfo.uin;
@@ -246,7 +246,7 @@ namespace MyFarm
             //string post = "farmKey=" + GetFarmKey(farmtime) + "&place=" + HttpUtility.UrlEncode(place) + "&ownerId=" + uid + "&farmTime=" + farmtime;
             string postData = "uinX=" + uinX + "&ownerId=" + uid + "&fName=" + HttpUtility.UrlEncode(uName) + "&uinY=" + uinY
                 + "&place=" + place + "&uIdx=" + uIdx + "&tName=" + HttpUtility.UrlEncode(tName) + "&farmKey="
-                + FarmKey.GetFarmKey(farmtime, farmKeyEncodeString) + "&farmTime=" + farmtime;
+                + TheKey.GetFarmKey(farmtime, farmKeyEncodeString) + "&farmTime=" + farmtime;
             string result = "";
             try
             {
@@ -268,14 +268,14 @@ namespace MyFarm
         /// uIdx=188880&fName=kk12345&farmTime=1298277215&tName=kk12345&uinY=198880&farmKey=f81276853b2638a9d2a86138b814cc93&ownerId=188880&place=1
         private string ClearWeed(string uid, string place)
         {
-            string farmtime = FarmKey.GetFarmTime();
+            string farmtime = TheKey.GetFarmTime();
             User _friendInfo = new User(GetUserModel(uid));
             string tName = _friendInfo.userName;
             string url = runUrl + "/bbs/source/plugin/qqfarm/core/mync.php?mod=farmlandstatus&act=clearWeed";
             //string post = "farmKey=" + GetFarmKey(farmtime) + "&place=" + HttpUtility.UrlEncode(place) + "&ownerId=" + uid + "&farmTime=" + farmtime;
             string postData = "uIdx=" + uIdx + "&fName=" + HttpUtility.UrlEncode(uName) + "&farmTime="
                 + farmtime + "&tName=" + HttpUtility.UrlEncode(tName) + "&uinY=" + uinY + "&farmKey="
-                + FarmKey.GetFarmKey(farmtime, farmKeyEncodeString) + "&ownerId=" + uid + "&place=" + place;
+                + TheKey.GetFarmKey(farmtime, farmKeyEncodeString) + "&ownerId=" + uid + "&place=" + place;
             string result = "";
             try
             {
@@ -298,7 +298,7 @@ namespace MyFarm
         /// uIdx=188880&fName=kk12345&farmTime=1298276973&cId=7&tName=kk12345&uinY=198880&farmKey=c09ae1907a79af16fe369b39d2a655e1&ownerId=188880&place=0
         private string Plant(string cid, string uid, string place)
         {
-            string farmtime = FarmKey.GetFarmTime();
+            string farmtime = TheKey.GetFarmTime();
             User _friendInfo = new User(GetUserModel(uid));
             string tName = _friendInfo.userName;
             string url = runUrl + "/bbs/source/plugin/qqfarm/core/mync.php?mod=farmlandstatus&act=planting";
@@ -306,7 +306,7 @@ namespace MyFarm
             //     HttpUtility.UrlEncode(place) + "&ownerId=" + uid + "&farmTime=" + farmtime;
             string postData = "uIdx=" + uIdx + "&fName=" + HttpUtility.UrlEncode(uName) + "&farmTime=" + farmtime
                 + "&cId=" + cid + "&tName=" + HttpUtility.UrlEncode(tName) + "&uinY=" + uinY
-                + "&farmKey=" + FarmKey.GetFarmKey(farmtime, farmKeyEncodeString) + "&ownerId=" + uid + "&place=" + place;
+                + "&farmKey=" + TheKey.GetFarmKey(farmtime, farmKeyEncodeString) + "&ownerId=" + uid + "&place=" + place;
             string result = "";
             try
             {
@@ -328,13 +328,13 @@ namespace MyFarm
         /// uIdx=188880&fName=kk12345&farmTime=1298277122&tName=kk12345&uinY=198880&farmKey=7363ba61b9bafbe0d00ffe3e9772620c&ownerId=188880&place=2
         private string Water(string uid, string place)
         {
-            string farmtime = FarmKey.GetFarmTime();
+            string farmtime = TheKey.GetFarmTime();
             User _friendInfo = new User(GetUserModel(uid));
             string tName = _friendInfo.userName;
             string url = runUrl + "/bbs/source/plugin/qqfarm/core/mync.php?mod=farmlandstatus&act=water";
             //string post = "farmKey=" + GetFarmKey(farmtime) + "&place=" + HttpUtility.UrlEncode(place) + "&ownerId=" + uid + "&farmTime=" + farmtime;
             string postData = "uIdx=" + uIdx + "&fName=" + HttpUtility.UrlEncode(uName) + "&farmTime=" + farmtime
-                + "&tName=" + HttpUtility.UrlEncode(tName) + "&uinY=" + uinY + "&farmKey=" + FarmKey.GetFarmKey(farmtime, farmKeyEncodeString)
+                + "&tName=" + HttpUtility.UrlEncode(tName) + "&uinY=" + uinY + "&farmKey=" + TheKey.GetFarmKey(farmtime, farmKeyEncodeString)
                 + "&ownerId=" + uid + "&place=" + place;
             string result = "";
             try
@@ -357,13 +357,13 @@ namespace MyFarm
         /// uIdx=188880&fName=kk12345&farmTime=1298277275&tName=kk12345&uinY=198880&farmKey=b892ada8e8d94e6f35d2a441081cf7cf&ownerId=188880&place=3
         private string Spraying(string uid, string place)
         {
-            string farmtime = FarmKey.GetFarmTime();
+            string farmtime = TheKey.GetFarmTime();
             User _friendInfo = new User(GetUserModel(uid));
             string tName = _friendInfo.userName;
             string url = runUrl + "/bbs/source/plugin/qqfarm/core/mync.php?mod=farmlandstatus&act=spraying";
             //string post = "farmKey=" + GetFarmKey(farmtime) + "&place=" + HttpUtility.UrlEncode(place) + "&ownerId=" + uid + "&farmTime=" + farmtime;
             string postData = "uIdx=" + uIdx + "&fName=" + HttpUtility.UrlEncode(uName) + "&farmTime=" + farmtime
-                + "&tName=" + HttpUtility.UrlEncode(tName) + "&uinY=" + uinY + "&farmKey=" + FarmKey.GetFarmKey(farmtime, farmKeyEncodeString)
+                + "&tName=" + HttpUtility.UrlEncode(tName) + "&uinY=" + uinY + "&farmKey=" + TheKey.GetFarmKey(farmtime, farmKeyEncodeString)
                 + "&ownerId=" + uid + "&place=" + place;
             string result = "";
             try
@@ -407,10 +407,10 @@ namespace MyFarm
         private string ScanShop()
         {
             string url = "http://www.szshbs.com/bbs/source/plugin/qqfarm/core/mync.php?mod=usertool&act=getSeedInfo";
-            string farmTime = FarmKey.GetFarmTime();
+            string farmTime = TheKey.GetFarmTime();
             //string postData = "farmKey=651d78aa55f705453876ee4d797e0561&uinY=29991&farmTime=1298264268&uIdx=19991";
             //string postData = "uinY=29991&uIdx=19991&farmTime=1298266368&farmKey=8592329421dc69647af2674acded7574";
-            string postData = "uinY=" + uinY + "&uIdx=" + uIdx + "&farmTime=" + farmTime + "&farmKey=" + FarmKey.GetFarmKey(farmTime, farmKeyEncodeString);
+            string postData = "uinY=" + uinY + "&uIdx=" + uIdx + "&farmTime=" + farmTime + "&farmKey=" + TheKey.GetFarmKey(farmTime, farmKeyEncodeString);
             string content = "";
             try
             {
@@ -428,8 +428,8 @@ namespace MyFarm
         #region 购买种子
         private void buySeed(string cid, string number)
         {
-            string farmTime = FarmKey.GetFarmTime();
-            string farmKey = FarmKey.GetFarmKey(farmTime, farmKeyEncodeString);
+            string farmTime = TheKey.GetFarmTime();
+            string farmKey = TheKey.GetFarmKey(farmTime, farmKeyEncodeString);
             string url = runUrl + "/bbs/source/plugin/qqfarm/core/mync.php?mod=repertory&act=buySeed";
             //uIdx=19991&cId=2&uinY=29991&number=2&farmTime=1298473054&farmKey=bc8ab86352bf312e86f204366eaf097b
             string postData = "uIdx=" + uIdx + "&cId=" + cid + "uinY=" + uinY + "&number=" + number + "&farmTime=" + farmTime + "&farmKey=" + farmKey;
@@ -460,8 +460,8 @@ namespace MyFarm
         {
             string url = runUrl + "/bbs/source/plugin/qqfarm/core/mync.php?mod=repertory&act=getUserSeed";
             //uIdx=19991&uinY=29991&farmTime=1298471523&farmKey=c69a093d8cd3e289c59b603b1a9d5db8
-            string farmTime = FarmKey.GetFarmTime();
-            string postData = "uIdx=" + uIdx + "&uinY=" + uinY + "&farmTime=" + farmTime + "&farmKey=" + FarmKey.GetFarmKey(farmTime, farmKeyEncodeString);
+            string farmTime = TheKey.GetFarmTime();
+            string postData = "uIdx=" + uIdx + "&uinY=" + uinY + "&farmTime=" + farmTime + "&farmKey=" + TheKey.GetFarmKey(farmTime, farmKeyEncodeString);
             string content = "";
             try
             {
@@ -488,9 +488,9 @@ namespace MyFarm
             string ownerId = id;
             User _friendInfo = new User(GetUserModel(id));
             string uinX = _friendInfo.uin;
-            string farmTime = FarmKey.GetFarmTime();
+            string farmTime = TheKey.GetFarmTime();
             string postData = "ownerId=" + ownerId + "&uinY=" + uinY + "&uIdx=" + uIdx
-                + "&uinX=" + uinX + "&farmTime=" + farmTime + "&farmKey=" + FarmKey.GetFarmKey(farmTime, farmKeyEncodeString);
+                + "&uinX=" + uinX + "&farmTime=" + farmTime + "&farmKey=" + TheKey.GetFarmKey(farmTime, farmKeyEncodeString);
             string content = "";
             JsonObject tempJson = new JsonObject();
             try
@@ -518,9 +518,9 @@ namespace MyFarm
             string ownerId = id;
             User _friendInfo = new User(GetUserModel(id));
             string uinX = _friendInfo.uin;
-            string farmTime = FarmKey.GetFarmTime();
+            string farmTime = TheKey.GetFarmTime();
             string postData = "ownerId=" + ownerId + "&uinY=" + uinY + "&uIdx=" + uIdx
-                + "&uinX=" + uinX + "&farmTime=" + farmTime + "&farmKey=" + FarmKey.GetFarmKey(farmTime, farmKeyEncodeString);
+                + "&uinX=" + uinX + "&farmTime=" + farmTime + "&farmKey=" + TheKey.GetFarmKey(farmTime, farmKeyEncodeString);
             string content = "";
             JsonObject tempJson = new JsonObject();
             try
@@ -543,10 +543,10 @@ namespace MyFarm
         #region 获取每日礼包
         private void getGift()
         {
-            string farmTime = FarmKey.GetFarmTime();
+            string farmTime = TheKey.GetFarmTime();
             string url = runUrl + "/bbs/source/plugin/qqfarm/core/mync.php?mod=Feast&act=getPackage";
             //uinY=29991&actid=10&ownerId=19991&farmKey=bba495ffafc391c5dd2f06318fa2458f&farmTime=1298308687&uIdx=19991
-            string postData = "uinY=" + uinY + "&farmKey=" + FarmKey.GetFarmKey(farmTime, farmKeyEncodeString)
+            string postData = "uinY=" + uinY + "&farmKey=" + TheKey.GetFarmKey(farmTime, farmKeyEncodeString)
                 + "&farmTime=" + farmTime + "&uIdx=" + uIdx;
             string content = "";
             try
@@ -630,8 +630,8 @@ namespace MyFarm
         #region 获取可操作好友列表
         private void getFriendsFliter()
         {
-            string farmTime = FarmKey.GetFarmTime();
-            string farmKey = FarmKey.GetFarmKey(farmTime, farmKeyEncodeString);
+            string farmTime = TheKey.GetFarmTime();
+            string farmKey = TheKey.GetFarmKey(farmTime, farmKeyEncodeString);
             string url = runUrl + "/bbs/source/plugin/qqfarm/core/mync.php?mod=friend_1-3";
             //friend%5Fuins=177152%2C171380%2C170910%2C41131%2C51529%2C21212%2C178400%2C23587%2C173687%2C29991%2C97861%2C69758%2C176582%2C21895%2C47487%2C186460%2C53197%2C22445%2C193473%2C100125%2C44755%2C49155%2C94339%2C10728%2C79011%2C196379%2C42576%2C65975%2C25668%2C58280%2C198880%2C197733%2C110460%2C186528%2C22507%2C188238%2C68166
             //&farmKey=1fbdac99ce71af50c778e3987169f5b2&uIdx=19991&cmd=1
@@ -666,8 +666,8 @@ namespace MyFarm
         {
             string url = runUrl + "/bbs/source/plugin/qqfarm/core/mync.php?mod=repertory&act=getUserCrop";
            //uIdx=188880&uinY=198880&farmTime=1298276786&farmKey=262c0f6d7598f7f0a7c655767d3021bb
-            string farmTime = FarmKey.GetFarmTime();
-            string farmKey = FarmKey.GetFarmKey(farmTime, farmKeyEncodeString);
+            string farmTime = TheKey.GetFarmTime();
+            string farmKey = TheKey.GetFarmKey(farmTime, farmKeyEncodeString);
             string postData = "uIdx=" + uIdx + "&uinY=" + uinY + "&farmTime=" + farmTime + "&farmKey=" + farmKey;
             try
             {
@@ -687,8 +687,8 @@ namespace MyFarm
         //cids为欲卖掉的物品id集合，如：2,3
         private void SellProducts(string cids)
         {
-            string farmTime = FarmKey.GetFarmTime();
-            string farmKey = FarmKey.GetFarmKey(farmTime, farmKeyEncodeString);
+            string farmTime = TheKey.GetFarmTime();
+            string farmKey = TheKey.GetFarmKey(farmTime, farmKeyEncodeString);
             string url = runUrl + "/bbs/source/plugin/qqfarm/core/mync.php?mod=repertory&act=saleAll";
             string postData = "farmTime=" + farmTime + "&cIds=" + HttpUtility.UrlEncode(cids)
                 + "&onlineTime=0&farmKey=" + farmKey + "&uId=" + uIdx + "&uIdx=" + uIdx + "&uinY=" + uinY;
@@ -1644,7 +1644,7 @@ namespace MyFarm
                 for (int i = 0; i < numWeed; i++)
                 {
                     result = ClearWeed(m.userId, m.place.ToString());
-                    DoResult doResultItem = new DoResult(result);
+                    DoResult doResultItem = new DoResult((new JsonObject(result)).GetCollection()[0]);
                     if (_autoCancel && doResultItem.exp.Equals("0"))
                     {
                         _autoWorm = false;
@@ -1668,7 +1668,7 @@ namespace MyFarm
                 for (int i = 0; i < numWorm; i++)
                 {
                     result = Spraying(m.userId, m.place.ToString());
-                    DoResult doResultItem = new DoResult(result);
+                    DoResult doResultItem = new DoResult((new JsonObject(result)).GetCollection()[0]);
                     if (_autoCancel && doResultItem.exp.Equals("0"))
                     {
                         _autoWorm = false;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Net;
-using QQWinFarm;
+using MyFarm;
 
 namespace MyFarm
 {

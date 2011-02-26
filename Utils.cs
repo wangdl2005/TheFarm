@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Security.Cryptography; 
-namespace QQWinFarm
+namespace MyFarm
 {
     public class Utils
     {
@@ -112,5 +112,46 @@ namespace QQWinFarm
         //        ret += result[i].ToString("x").PadLeft(2, '0'); 
         //    return ret; 
         //}  
+
+        #region SHA1算法
+        public static string getSha1Hash(string input)
+        {
+            SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider();
+            byte[] str1 = Encoding.UTF8.GetBytes(input);
+            byte[] str2 = sha1.ComputeHash(str1);
+            sha1.Clear();
+            (sha1 as IDisposable).Dispose();
+            return Convert.ToBase64String(str2);
+
+        }
+
+        #region SHA1算法
+        public static string getSha1Hash2(string input)
+        {
+            
+            byte[] StrRes = Encoding.Default.GetBytes(input);
+            HashAlgorithm iSHA = new SHA1CryptoServiceProvider();
+            StrRes = iSHA.ComputeHash(StrRes);
+            StringBuilder EnText = new StringBuilder();
+            foreach (byte iByte in StrRes)
+            {
+                EnText.AppendFormat("{0:x2}", iByte);
+            }
+            return EnText.ToString();
+            
+            /*
+            byte[] buffer = SHA256.Create().ComputeHash(Encoding.Default.GetBytes(input));
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < buffer.Length; i++)
+            {
+               builder.Append(buffer[i].ToString("x2"));
+            }
+            return builder.ToString();
+            */
+        }
+        #endregion
+        //FormsAuthentication.HashPasswordForStoringInConfigFile(PasswordString, "SHA1");
+
+        #endregion
     }
 }

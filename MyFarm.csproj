@@ -54,7 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FarmKey.cs" />
+    <Compile Include="TheKey.cs" />
     <Compile Include="FarmStatus.cs" />
     <Compile Include="FrmFarm.cs">
       <SubType>Form</SubType>

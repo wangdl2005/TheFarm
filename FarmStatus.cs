@@ -319,5 +319,12 @@ namespace FarmStatus
         {
             this.resultInfo = new JsonObject(content);
         }
+        public DoResult(JsonObject json)
+        {
+            if (json != null)
+            {
+                this.resultInfo = json;
+            }
+        }
     }
 }

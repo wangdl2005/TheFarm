@@ -4,7 +4,7 @@
  using System.Net; 
  using System.IO; 
  using System.Threading; 
-namespace QQWinFarm
+namespace MyFarm
 {
    
     public class HttpHelper

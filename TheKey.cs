@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using QQWinFarm;
+using MyFarm;
 
 namespace MyFarm
 {
-    public class FarmKey
+    public class TheKey
     {
         public static double NetworkDelay = 0;
         #region 获得FarmTime
@@ -33,6 +33,12 @@ namespace MyFarm
         public static string GetFarmKey(string farmTime, string farmKeyEncodeString)
         {
             return Utils.getMd5Hash2(farmTime + farmKeyEncodeString.Substring(Convert.ToInt32(farmTime) % 10));
+        }
+
+        public static string GetPastureKey(string farmTime, string pastureKeyEncodeString)
+        {
+            return Utils.getSha1Hash2(farmTime + pastureKeyEncodeString.Substring(Convert.ToInt32(farmTime) % 10));
+            //return Utils.getSha1Hash(farmTime);
         }
         #endregion
     }
