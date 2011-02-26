@@ -1503,7 +1503,7 @@ namespace MyFarm
         {
             for (int x = 0; x < _bagStatus.GetCollection().Count; x++)
             {
-                if (_bagStatus.GetCollection()[x].GetValue("cId").Equals(cid))//不是空的
+                if (_bagStatus.GetCollection()[x].GetValue("cId") != null&&_bagStatus.GetCollection()[x].GetValue("cId").Equals(cid))//不是空的
                 {
                     return _bagStatus.GetCollection()[x];
                 }

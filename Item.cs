@@ -155,7 +155,24 @@ namespace Item
         JsonObject bagInfo = new JsonObject();
         public BagItem(JsonObject bagInfo)
         {
-            this.bagInfo = bagInfo;
+            if (bagInfo != null)
+            {
+                this.bagInfo = bagInfo;
+            }
+            else
+            {
+                JsonObject tmpBagInfo = new JsonObject();
+                tmpBagInfo.Add("type","1"); ;
+                tmpBagInfo.Add("cId","0");
+                tmpBagInfo.Add("cName","未识别");
+                tmpBagInfo.Add("amount","0");
+                tmpBagInfo.Add("lifecycle","0");
+                tmpBagInfo.Add("level","0");
+                tmpBagInfo.Add("tId","0");
+                tmpBagInfo.Add("tName", "未识别");
+                tmpBagInfo.Add("depict","0");
+                this.bagInfo = tmpBagInfo;
+            }
         }
         public string type
         { get { return bagInfo.GetValue("type"); } }//1：植物;3：化肥
