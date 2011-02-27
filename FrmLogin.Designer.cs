@@ -38,6 +38,7 @@
             this.statusIsLog = new System.Windows.Forms.ToolStripStatusLabel();
             this.btnLoginFarm = new System.Windows.Forms.Button();
             this.btnLoginForum = new System.Windows.Forms.Button();
+            this.btnLoginPasture = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -109,7 +110,7 @@
             // 
             // btnLoginFarm
             // 
-            this.btnLoginFarm.Location = new System.Drawing.Point(52, 148);
+            this.btnLoginFarm.Location = new System.Drawing.Point(16, 148);
             this.btnLoginFarm.Name = "btnLoginFarm";
             this.btnLoginFarm.Size = new System.Drawing.Size(75, 23);
             this.btnLoginFarm.TabIndex = 8;
@@ -119,7 +120,7 @@
             // 
             // btnLoginForum
             // 
-            this.btnLoginForum.Location = new System.Drawing.Point(164, 148);
+            this.btnLoginForum.Location = new System.Drawing.Point(202, 148);
             this.btnLoginForum.Name = "btnLoginForum";
             this.btnLoginForum.Size = new System.Drawing.Size(75, 23);
             this.btnLoginForum.TabIndex = 9;
@@ -127,11 +128,22 @@
             this.btnLoginForum.UseVisualStyleBackColor = true;
             this.btnLoginForum.Click += new System.EventHandler(this.btnLoginForum_Click);
             // 
-            // Form1
+            // btnLoginPasture
+            // 
+            this.btnLoginPasture.Location = new System.Drawing.Point(110, 148);
+            this.btnLoginPasture.Name = "btnLoginPasture";
+            this.btnLoginPasture.Size = new System.Drawing.Size(75, 23);
+            this.btnLoginPasture.TabIndex = 10;
+            this.btnLoginPasture.Text = "进入牧场";
+            this.btnLoginPasture.UseVisualStyleBackColor = true;
+            this.btnLoginPasture.Click += new System.EventHandler(this.btnLoginPasture_Click);
+            // 
+            // FrmLogin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(302, 206);
+            this.Controls.Add(this.btnLoginPasture);
             this.Controls.Add(this.btnLoginForum);
             this.Controls.Add(this.btnLoginFarm);
             this.Controls.Add(this.statusStrip1);
@@ -142,7 +154,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnLogin);
             this.MaximizeBox = false;
-            this.Name = "Form1";
+            this.Name = "FrmLogin";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "论坛登录";
             this.statusStrip1.ResumeLayout(false);
@@ -164,6 +176,7 @@
         private System.Windows.Forms.ToolStripStatusLabel statusIsLog;
         private System.Windows.Forms.Button btnLoginFarm;
         private System.Windows.Forms.Button btnLoginForum;
+        private System.Windows.Forms.Button btnLoginPasture;
     }
 }
 

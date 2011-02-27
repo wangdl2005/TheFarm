@@ -117,6 +117,8 @@
             this.txtAch = new System.Windows.Forms.RichTextBox();
             this.lbtnClearLog = new System.Windows.Forms.LinkLabel();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.txtFarmExpTimes = new System.Windows.Forms.TextBox();
             this.lbtnFarmExp = new System.Windows.Forms.LinkLabel();
             this.listViewFarmland = new System.Windows.Forms.ListView();
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -145,6 +147,7 @@
             this.columnHeader27 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader28 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.lblTotalMoney = new System.Windows.Forms.Label();
             this.lbtnGetRepertory = new System.Windows.Forms.LinkLabel();
             this.lbtnSellUnlocked = new System.Windows.Forms.LinkLabel();
             this.listViewRepertory = new System.Windows.Forms.ListView();
@@ -161,9 +164,6 @@
             this.timer3 = new System.Windows.Forms.Timer(this.components);
             this.timer4 = new System.Windows.Forms.Timer(this.components);
             this.timer5 = new System.Windows.Forms.Timer(this.components);
-            this.txtFarmExpTimes = new System.Windows.Forms.TextBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.lblTotalMoney = new System.Windows.Forms.Label();
             this.groupBox3.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -271,7 +271,7 @@
             this.txtTimeGetMature.Name = "txtTimeGetMature";
             this.txtTimeGetMature.Size = new System.Drawing.Size(58, 21);
             this.txtTimeGetMature.TabIndex = 28;
-            this.txtTimeGetMature.Text = "9000";
+            this.txtTimeGetMature.Text = "21600";
             // 
             // label11
             // 
@@ -416,7 +416,7 @@
             this.btnPickFriendFilter.Name = "btnPickFriendFilter";
             this.btnPickFriendFilter.Size = new System.Drawing.Size(105, 23);
             this.btnPickFriendFilter.TabIndex = 29;
-            this.btnPickFriendFilter.Text = "摘取可操作好友";
+            this.btnPickFriendFilter.Text = "操作可操作好友";
             this.btnPickFriendFilter.UseVisualStyleBackColor = true;
             this.btnPickFriendFilter.Click += new System.EventHandler(this.btnPickFriendFilter_Click);
             // 
@@ -522,7 +522,7 @@
             this.btnPickMature.Name = "btnPickMature";
             this.btnPickMature.Size = new System.Drawing.Size(108, 23);
             this.btnPickMature.TabIndex = 26;
-            this.btnPickMature.Text = "摘取成熟列表";
+            this.btnPickMature.Text = "操作成熟列表";
             this.btnPickMature.UseVisualStyleBackColor = true;
             this.btnPickMature.Click += new System.EventHandler(this.btnPickMature_Click);
             // 
@@ -809,7 +809,7 @@
             // lblExp
             // 
             this.lblExp.AutoSize = true;
-            this.lblExp.Location = new System.Drawing.Point(108, 62);
+            this.lblExp.Location = new System.Drawing.Point(102, 62);
             this.lblExp.Name = "lblExp";
             this.lblExp.Size = new System.Drawing.Size(17, 12);
             this.lblExp.TabIndex = 16;
@@ -1042,6 +1042,23 @@
             this.groupBox7.TabIndex = 33;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "农场信息";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(239, 2);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(41, 12);
+            this.label16.TabIndex = 3;
+            this.label16.Text = "次数：";
+            // 
+            // txtFarmExpTimes
+            // 
+            this.txtFarmExpTimes.Location = new System.Drawing.Point(294, -1);
+            this.txtFarmExpTimes.Name = "txtFarmExpTimes";
+            this.txtFarmExpTimes.Size = new System.Drawing.Size(52, 21);
+            this.txtFarmExpTimes.TabIndex = 2;
+            this.txtFarmExpTimes.Text = "100";
             // 
             // lbtnFarmExp
             // 
@@ -1298,6 +1315,15 @@
             this.tabPage4.Text = "我的仓库";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
+            // lblTotalMoney
+            // 
+            this.lblTotalMoney.AutoSize = true;
+            this.lblTotalMoney.Location = new System.Drawing.Point(6, 288);
+            this.lblTotalMoney.Name = "lblTotalMoney";
+            this.lblTotalMoney.Size = new System.Drawing.Size(95, 12);
+            this.lblTotalMoney.TabIndex = 3;
+            this.lblTotalMoney.Text = "总价值为：*金币";
+            // 
             // lbtnGetRepertory
             // 
             this.lbtnGetRepertory.AutoSize = true;
@@ -1408,32 +1434,6 @@
             // 
             this.timer5.Interval = 1000;
             this.timer5.Tick += new System.EventHandler(this.timer5_Tick);
-            // 
-            // txtFarmExpTimes
-            // 
-            this.txtFarmExpTimes.Location = new System.Drawing.Point(294, -1);
-            this.txtFarmExpTimes.Name = "txtFarmExpTimes";
-            this.txtFarmExpTimes.Size = new System.Drawing.Size(52, 21);
-            this.txtFarmExpTimes.TabIndex = 2;
-            this.txtFarmExpTimes.Text = "100";
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(239, 2);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(41, 12);
-            this.label16.TabIndex = 3;
-            this.label16.Text = "次数：";
-            // 
-            // lblTotalMoney
-            // 
-            this.lblTotalMoney.AutoSize = true;
-            this.lblTotalMoney.Location = new System.Drawing.Point(6, 288);
-            this.lblTotalMoney.Name = "lblTotalMoney";
-            this.lblTotalMoney.Size = new System.Drawing.Size(95, 12);
-            this.lblTotalMoney.TabIndex = 3;
-            this.lblTotalMoney.Text = "总价值为：*金币";
             // 
             // FrmFarm
             // 

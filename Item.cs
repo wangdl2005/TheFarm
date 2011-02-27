@@ -94,14 +94,6 @@ namespace Item
                 nullCropInfo.Add("cId", "0");
                 nullCropInfo.Add("cLevel", "0");
                 nullCropInfo.Add("cName", "未识别");
-                nullCropInfo.Add("cType", "0");
-                nullCropInfo.Add("cropExp", "0");
-                nullCropInfo.Add("expect", "0");
-                nullCropInfo.Add("growthCycle", "0");
-                //nullCropInfo.Add("maturingTime", "0");
-                nullCropInfo.Add("growthCycleNext", "0");
-                nullCropInfo.Add("price", "0");
-                nullCropInfo.Add("numGetExpect", "0");
                 this.cropInfo = nullCropInfo;
             }
         }
@@ -192,5 +184,84 @@ namespace Item
         { get{ return bagInfo.GetValue("type").Equals("3") ? bagInfo.GetValue("tName") : ""; }  }//化肥名
         public string depict
         { get{ return bagInfo.GetValue("type").Equals("3") ? bagInfo.GetValue("depict") : ""; }  }//化肥作用说明
+    }
+    class AnimalItem
+    {
+        public Dictionary<string, string> animalInfo = new Dictionary<string, string>();
+        public AnimalItem(Dictionary<string, string> animalInfo)
+        {
+            if (animalInfo != null)
+            {
+                this.animalInfo = animalInfo;
+            }
+            else
+            {
+                //商店信息中无此对象
+                Dictionary<string, string> nullAnimalInfo = new Dictionary<string, string>();
+                nullAnimalInfo.Add("cId", "0");
+                nullAnimalInfo.Add("cLevel", "0");
+                nullAnimalInfo.Add("cName", "未识别");
+                nullAnimalInfo.Add("price", "0");
+                this.animalInfo = nullAnimalInfo;
+            }
+        }
+        //编号
+        public string cId
+        { get { return animalInfo.ContainsKey("编号") ? animalInfo["编号"] : "0"; }}
+        //名称
+        public string cName
+        { get { return animalInfo.ContainsKey("名称") ? animalInfo["名称"] : "0"; } }
+        //领养等级
+        public string cLevel
+        { get { return animalInfo.ContainsKey("领养等级") ? animalInfo["领养等级"] : "0"; } }
+        //产品
+        public string bName
+        { get { return animalInfo.ContainsKey("产品") ? animalInfo["产品"] : "0"; } }
+        public string consum
+        { get { return animalInfo.ContainsKey("编号") ? animalInfo["编号"] : "0"; }}
+        public string cub
+        { get { return animalInfo.ContainsKey("编号") ? animalInfo["编号"] : "0"; }}
+        //生产间隔
+        public string cycle
+        { get { return animalInfo.ContainsKey("生产间隔") ? animalInfo["生产间隔"] : "0"; } }
+        public string expect
+        { get { return animalInfo.ContainsKey("编号") ? animalInfo["编号"] : "0"; }}
+        //"growing":"14400,14400,129600,15"
+        //生产时长 : 129600
+        public string growing
+        { get { return animalInfo.ContainsKey("生产时长") ? animalInfo["生产时长"] : "0"; } }
+        public string growthCycle
+        { get { return animalInfo.ContainsKey("编号") ? animalInfo["编号"] : "0"; }}
+        //产物经验
+        public string harvestbExp
+        { get { return animalInfo.ContainsKey("产物经验") ? animalInfo["产物经验"] : "0"; } }
+        //动物经验
+        public string harvestpExp
+        { get { return animalInfo.ContainsKey("动物经验") ? animalInfo["动物经验"] : "0"; } }
+        public string maturingTime
+        { get { return animalInfo.ContainsKey("编号") ? animalInfo["编号"] : "0"; }}
+        //预计产量
+        public string output
+        { get { return animalInfo.ContainsKey("预计产量") ? animalInfo["预计产量"] : "0"; } }
+        //售价
+        public string price
+        { get { return animalInfo.ContainsKey("售价") ? animalInfo["售价"] : "0"; } }
+        public string procreation
+        { get { return animalInfo.ContainsKey("编号") ? animalInfo["编号"] : "0"; }}
+        //等待产品的时间
+        public string productime
+        { get { return animalInfo.ContainsKey("等待产品的时间") ? animalInfo["等待产品的时间"] : "0"; } }
+        //动物价值
+        public string productprice
+        { get { return animalInfo.ContainsKey("动物价值") ? animalInfo["动物价值"] : "0"; } }
+        public string sinfo
+        { get { return animalInfo.ContainsKey("编号") ? animalInfo["编号"] : "0"; }}
+        public string bsprice
+        { get { return animalInfo.ContainsKey("编号") ? animalInfo["编号"] : "0"; }}
+        public string msprice
+        { get { return animalInfo.ContainsKey("编号") ? animalInfo["编号"] : "0"; }}
+        //产物价值
+        public string byproductprice
+        { get { return animalInfo.ContainsKey("产物价值") ? animalInfo["产物价值"] : "0"; } }
     }
 }

@@ -123,5 +123,13 @@ namespace MyFarm
             frmForum.ShowDialog();
             this.Close();
         }
+
+        private void btnLoginPasture_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            FrmPasture frm = new FrmPasture(container);
+            frm.ShowDialog();
+            this.Close();
+        }
     }
 }

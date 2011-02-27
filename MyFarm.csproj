@@ -54,8 +54,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FrmPasture.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmPasture.Designer.cs">
+      <DependentUpon>FrmPasture.cs</DependentUpon>
+    </Compile>
     <Compile Include="TheKey.cs" />
-    <Compile Include="FarmStatus.cs" />
+    <Compile Include="TheStatus.cs" />
     <Compile Include="FrmFarm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -93,6 +99,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmForum.resx">
       <DependentUpon>FrmForum.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmPasture.resx">
+      <DependentUpon>FrmPasture.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

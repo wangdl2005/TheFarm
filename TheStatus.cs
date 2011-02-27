@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Json;
 
-namespace FarmStatus
+namespace TheStatus
 {
     //用户信息
     class User
@@ -105,6 +105,8 @@ namespace FarmStatus
         public DoStatus doStatus
         { get; set;}
     }
+
+    
     //可操作状态
     class DoStatus
     {
@@ -138,6 +140,7 @@ namespace FarmStatus
         public string waterStatus
         { get { return doStatusInfo.ContainsKey("4") ? "可浇水" : ""; ;} }
     }
+    
     //土地信息
     class Land
     {
@@ -326,5 +329,78 @@ namespace FarmStatus
                 this.resultInfo = json;
             }
         }
+    }
+    //以下是牧场的状态类
+    class AnimalStatus
+    {
+        JsonObject PastureStatus = new JsonObject();
+        public AnimalStatus(JsonObject PastureStatus)
+        {
+            this.PastureStatus = PastureStatus;
+        }
+        //"buyTime":1298504925,"cId":1501,"growTime":140926,"growTimeNext":42995,"hungry":0,"serial":2,"status":5,"statusNext":3,"totalCome":24
+        public string buyTime
+        { get { return PastureStatus.GetValue("buyTime"); } }
+        public string cId
+        { get { return PastureStatus.GetValue("cId"); } }
+        public string growTime
+        { get { return PastureStatus.GetValue("growTime"); } }
+        public string growTimeNext
+        { get { return PastureStatus.GetValue("growTimeNext"); } }
+        public string hungry
+        { get { return PastureStatus.GetValue("hungry"); } }
+        public string serial
+        { get { return PastureStatus.GetValue("serial"); } }
+        public string status
+        { get { return PastureStatus.GetValue("status"); } }
+        public string statusNext
+        { get { return PastureStatus.GetValue("statusNext"); } }
+        public string totalCome
+        { get { return PastureStatus.GetValue("totalCome"); } }
+    }
+    class FriendFilterP
+    {
+        public FriendFilterP()
+        { }
+        public string userId
+        {
+            get;
+            set;
+        }
+        public DoStatusP doStatus
+        { get; set; }
+    }
+
+    class DoStatusP
+    {
+        JsonObject doStatusInfo = new JsonObject();
+        public DoStatusP(JsonObject doStatusInfo)
+        {
+            this.doStatusInfo = doStatusInfo;
+        }
+        public string theDoStatus
+        {
+            get
+            {
+                return !doStatusInfo.GetValue("t").Equals("0") ? "可偷取" :
+                       (
+                            !doStatusInfo.GetValue("g").Equals("0") ? "可抓去" :
+                            (
+                                !doStatusInfo.GetValue("p").Equals("0") ? "可打蚊" :
+                                (
+                                    !doStatusInfo.GetValue("b").Equals("0") ? "可拾取" : ""
+                                )
+                            )
+                       );
+            }
+        }
+        public string harvestStatus
+        { get { return doStatusInfo.ContainsKey("1") ? "可偷取" : ""; ;} }
+        public string weedStatus
+        { get { return doStatusInfo.ContainsKey("2") ? "可除草" : ""; ;} }
+        public string wormStatus
+        { get { return doStatusInfo.ContainsKey("3") ? "可除虫" : ""; ;} }
+        public string waterStatus
+        { get { return doStatusInfo.ContainsKey("4") ? "可浇水" : ""; ;} }
     }
 }

@@ -15,7 +15,7 @@ using MyFarm;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using System.Collections;
-using FarmStatus;
+using TheStatus;
 using Item;
 using Ini;
 using System.Collections.Specialized;
@@ -2128,7 +2128,7 @@ namespace MyFarm
                 //让文本框获取焦点 
                 richTextBoxLog.Focus();
                 //设置光标的位置到文本尾 
-                richTextBoxLog.Select(richTextBoxLog.TextLength, 0);
+                richTextBoxLog.Select(richTextBoxLog.TextLength - 1, 0);
                 //滚动到控件光标处 
                 richTextBoxLog.ScrollToCaret();
             });
