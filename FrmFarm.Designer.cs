@@ -117,6 +117,7 @@
             this.txtAch = new System.Windows.Forms.RichTextBox();
             this.lbtnClearLog = new System.Windows.Forms.LinkLabel();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.lbtnFarmExp = new System.Windows.Forms.LinkLabel();
             this.listViewFarmland = new System.Windows.Forms.ListView();
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -159,6 +160,10 @@
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.timer3 = new System.Windows.Forms.Timer(this.components);
             this.timer4 = new System.Windows.Forms.Timer(this.components);
+            this.timer5 = new System.Windows.Forms.Timer(this.components);
+            this.txtFarmExpTimes = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.lblTotalMoney = new System.Windows.Forms.Label();
             this.groupBox3.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -434,9 +439,9 @@
             this.groupBox4.Controls.Add(this.btnSpraying);
             this.groupBox4.Controls.Add(this.btnClearWeed);
             this.groupBox4.Controls.Add(this.btnHarvest);
-            this.groupBox4.Location = new System.Drawing.Point(18, 16);
+            this.groupBox4.Location = new System.Drawing.Point(10, 3);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(268, 113);
+            this.groupBox4.Size = new System.Drawing.Size(268, 108);
             this.groupBox4.TabIndex = 27;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "农场操作";
@@ -924,6 +929,7 @@
             this.columnHeader19,
             this.columnHeader20,
             this.columnHeader21});
+            this.listViewMatureList.FullRowSelect = true;
             this.listViewMatureList.GridLines = true;
             this.listViewMatureList.Location = new System.Drawing.Point(7, 19);
             this.listViewMatureList.Name = "listViewMatureList";
@@ -931,6 +937,7 @@
             this.listViewMatureList.TabIndex = 0;
             this.listViewMatureList.UseCompatibleStateImageBehavior = false;
             this.listViewMatureList.View = System.Windows.Forms.View.Details;
+            this.listViewMatureList.DoubleClick += new System.EventHandler(this.listViewMatureList_DoubleClick);
             // 
             // columnHeader15
             // 
@@ -1025,6 +1032,9 @@
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.label16);
+            this.groupBox7.Controls.Add(this.txtFarmExpTimes);
+            this.groupBox7.Controls.Add(this.lbtnFarmExp);
             this.groupBox7.Controls.Add(this.listViewFarmland);
             this.groupBox7.Location = new System.Drawing.Point(188, 12);
             this.groupBox7.Name = "groupBox7";
@@ -1032,6 +1042,17 @@
             this.groupBox7.TabIndex = 33;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "农场信息";
+            // 
+            // lbtnFarmExp
+            // 
+            this.lbtnFarmExp.AutoSize = true;
+            this.lbtnFarmExp.Location = new System.Drawing.Point(359, 2);
+            this.lbtnFarmExp.Name = "lbtnFarmExp";
+            this.lbtnFarmExp.Size = new System.Drawing.Size(65, 12);
+            this.lbtnFarmExp.TabIndex = 1;
+            this.lbtnFarmExp.TabStop = true;
+            this.lbtnFarmExp.Text = "刷农场经验";
+            this.lbtnFarmExp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbtnFarmExp_LinkClicked);
             // 
             // listViewFarmland
             // 
@@ -1216,6 +1237,7 @@
             this.columnHeader26,
             this.columnHeader27,
             this.columnHeader28});
+            this.listViewFriendsFilter.FullRowSelect = true;
             this.listViewFriendsFilter.GridLines = true;
             this.listViewFriendsFilter.Location = new System.Drawing.Point(17, 19);
             this.listViewFriendsFilter.Name = "listViewFriendsFilter";
@@ -1223,6 +1245,7 @@
             this.listViewFriendsFilter.TabIndex = 0;
             this.listViewFriendsFilter.UseCompatibleStateImageBehavior = false;
             this.listViewFriendsFilter.View = System.Windows.Forms.View.Details;
+            this.listViewFriendsFilter.DoubleClick += new System.EventHandler(this.listViewFriendsFilter_DoubleClick);
             // 
             // columnHeader22
             // 
@@ -1264,6 +1287,7 @@
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.lblTotalMoney);
             this.tabPage4.Controls.Add(this.lbtnGetRepertory);
             this.tabPage4.Controls.Add(this.lbtnSellUnlocked);
             this.tabPage4.Controls.Add(this.listViewRepertory);
@@ -1380,6 +1404,37 @@
             this.timer4.Interval = 1000;
             this.timer4.Tick += new System.EventHandler(this.timer4_Tick);
             // 
+            // timer5
+            // 
+            this.timer5.Interval = 1000;
+            this.timer5.Tick += new System.EventHandler(this.timer5_Tick);
+            // 
+            // txtFarmExpTimes
+            // 
+            this.txtFarmExpTimes.Location = new System.Drawing.Point(294, -1);
+            this.txtFarmExpTimes.Name = "txtFarmExpTimes";
+            this.txtFarmExpTimes.Size = new System.Drawing.Size(52, 21);
+            this.txtFarmExpTimes.TabIndex = 2;
+            this.txtFarmExpTimes.Text = "100";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(239, 2);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(41, 12);
+            this.label16.TabIndex = 3;
+            this.label16.Text = "次数：";
+            // 
+            // lblTotalMoney
+            // 
+            this.lblTotalMoney.AutoSize = true;
+            this.lblTotalMoney.Location = new System.Drawing.Point(6, 288);
+            this.lblTotalMoney.Name = "lblTotalMoney";
+            this.lblTotalMoney.Size = new System.Drawing.Size(95, 12);
+            this.lblTotalMoney.TabIndex = 3;
+            this.lblTotalMoney.Text = "总价值为：*金币";
+            // 
             // FrmFarm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1411,6 +1466,7 @@
             this.groupBox6.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
@@ -1556,5 +1612,10 @@
         private System.Windows.Forms.LinkLabel lbtnSellUnlocked;
         private System.Windows.Forms.ColumnHeader columnHeader35;
         private System.Windows.Forms.ColumnHeader columnHeader36;
+        private System.Windows.Forms.LinkLabel lbtnFarmExp;
+        private System.Windows.Forms.Timer timer5;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.TextBox txtFarmExpTimes;
+        private System.Windows.Forms.Label lblTotalMoney;
     }
 }

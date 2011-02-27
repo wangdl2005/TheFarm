@@ -27,6 +27,11 @@ namespace MyFarm
     public partial class FrmFarm : Form
     {
         #region 变量定义
+
+        bool autoExp = true;
+        Thread threadTest;
+        int farmExpTimes = 0;
+
         private CookieContainer cookie = new CookieContainer();     
         //JsonObject _status_filter = new JsonObject("{}");//可操作好友列表
         JsonObject model; //json模板
@@ -199,6 +204,28 @@ namespace MyFarm
             }
             return result;
         }
+
+        private string ScarifyForce(string uid, string place)
+        {
+            string farmtime = TheKey.GetFarmTime();
+            string url = runUrl + "/bbs/source/plugin/qqfarm/core/mync.php?mod=farmlandstatus&act=scarify";
+            User _friendInfo = new User(GetUserModel(uid));
+            string tName = _friendInfo.userName;
+            string postData = "cropStatus=0&fName=" + HttpUtility.UrlEncode(uName) + "&farmTime=" + farmtime
+                + "&tName=" + HttpUtility.UrlEncode(tName) + "&uIdx=" + uIdx + "&uinY=" + uinY + "farmKey="
+                + TheKey.GetFarmKey(farmtime, farmKeyEncodeString) + "&ownerId=" + uid + "&place=" + place;
+            string result = "";
+            try
+            {
+                result = HttpChinese.GetHtml(postData, cookie, url);
+            }
+            catch (Exception except)
+            {
+                toLog(except.Message);
+            }
+            return result;
+        }
+
 
         /// <summary> 
         /// 摘取自己菜
@@ -937,6 +964,7 @@ namespace MyFarm
                     have = newLand.b;
                     if (have.Equals("0"))//无植物
                     {
+                        getBagInfo();
                         BagItem newBagItem = new BagItem(GetBagItemModel(cId));
                         if (_autoSeed && (Convert.ToInt32(newBagItem.amount) == 0))
                         {
@@ -1997,6 +2025,7 @@ namespace MyFarm
                 txtAch.AppendText("  已除草" + theAch.numWeed + "根\n");
                 txtAch.AppendText("  已除虫" + theAch.numWorm + "只\n");
                 txtAch.AppendText("  已浇水" + theAch.numWater + "次\n");
+                int money = 0;
                 if (theAch.cropList != null)
                 {
                     foreach (CropGet cG in theAch.cropList)
@@ -2004,9 +2033,12 @@ namespace MyFarm
                         if (!cG.cropId.Equals(""))
                         {
                             txtAch.AppendText("  已偷取" + cG.cropName.Replace("\0", "") + "共" + cG.numCrop + "个\n");
+                            money += cG.numCrop * Convert.ToInt32((new CropItem(GetCropModel(cG.cropId))).priceOnSale);
                         }
                     }
                 }
+                txtAch.AppendText(" 总价值：" + money.ToString() +"\n");
+                txtAch.AppendText(" 总经验：" + (theAch.numWater + theAch.numWeed + theAch.numWorm).ToString() + "点经验" +"\n");
             });
         }
         #endregion
@@ -2020,6 +2052,7 @@ namespace MyFarm
             {
                 listViewRepertory.Items.Clear();
             });
+            long allMoney = 0;
             DataTable dt = new DataTable();
             DataRow dr;
             dt.Columns.Add("id", typeof(String));
@@ -2049,6 +2082,7 @@ namespace MyFarm
                 dr[3] = cMoney;
                 dr[4] = cNum;
                 dr[5] = totalMoney;
+                allMoney += totalMoney;
                 dr[6] = isLocked;
                 dr[7] = DateTime.Now.ToString();
 
@@ -2066,6 +2100,7 @@ namespace MyFarm
             this.Invoke((MethodInvoker)delegate
             {
                 listViewRepertory.Items.AddRange(lvitems);
+                lblTotalMoney.Text = "总价值为：" + allMoney +"金币";
             });
         }
         #endregion
@@ -2304,7 +2339,34 @@ namespace MyFarm
             toLog("获取" + userName + "土地信息成功" );
             toStatus("当前显示农场为：" + userName + "的农场");
         }
-
+        
+        private void listViewFriendsFilter_DoubleClick(object sender, EventArgs e)
+        {
+            //获得当前行 
+            int iRowCurr = this.listViewFriendsFilter.SelectedItems[0].Index;
+            //取得当前行的数据 
+            string id = listViewFriendsFilter.SelectedItems[0].SubItems[1].Text;
+            string userName = listViewFriendsFilter.SelectedItems[0].SubItems[2].Text;
+            _farmStatus = GetFUserInfo(id, out dogJson);
+            showFarmland(_farmStatus);
+            showId = id;
+            toLog("获取" + userName + "土地信息成功");
+            toStatus("当前显示农场为：" + userName + "的农场");
+        }
+        
+        private void listViewMatureList_DoubleClick(object sender, EventArgs e)
+        {
+            //获得当前行 
+            int iRowCurr = this.listViewMatureList.SelectedItems[0].Index;
+            //取得当前行的数据 
+            string id = listViewMatureList.SelectedItems[0].SubItems[1].Text;
+            string userName = listViewMatureList.SelectedItems[0].SubItems[2].Text;
+            _farmStatus = GetFUserInfo(id, out dogJson);
+            showFarmland(_farmStatus);
+            showId = id;
+            toLog("获取" + userName + "土地信息成功");
+            toStatus("当前显示农场为：" + userName + "的农场");
+        }
 
         private void listViewRepertory_DoubleClick(object sender, EventArgs e)
         {
@@ -2417,9 +2479,9 @@ namespace MyFarm
             LandClearWeed(showId, _farmStatus);
             LandSpraying(showId, _farmStatus);
             LandWater(showId, _farmStatus);
-            System.Threading.Thread.Sleep(2000);
+            _farmStatus = GetFUserInfo(showId);
             LandScaify(showId, _farmStatus);
-            System.Threading.Thread.Sleep(2000);
+            _farmStatus = GetFUserInfo(showId);
             LandPlant(showId, _farmStatus);
             _farmStatus = GetFUserInfo(showId);
             showFarmland(_farmStatus);
@@ -2540,7 +2602,6 @@ namespace MyFarm
             threadSaveMatureList.Start();
         }
 
-
         private void lbtnGetRepertory_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Thread threadGetRepertory = new Thread(new ThreadStart(GetRepertoryInfoThread));
@@ -2600,7 +2661,7 @@ namespace MyFarm
         {
             if (timeUserInfoGo >= _userInfoUpTime)
             {
-                threadGetUserInfo = new Thread(new ThreadStart(GetUserInfo));
+                threadGetUserInfo = new Thread(new ThreadStart(GetUserAndDo));
                 threadGetUserInfo.Start();
                 timeUserInfoGo = 0;
             }
@@ -2666,7 +2727,60 @@ namespace MyFarm
             }
         }
         #endregion
+        
+        #region 自动刷经验
+        private void lbtnFarmExp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (lbtnFarmExp.Text.Equals("刷农场经验"))
+            {
+                farmExpTimes = Convert.ToInt32(txtFarmExpTimes.Text);
+                autoExp = true;
+            }
+            else
+            {
+                autoExp = false;
+            }
+            timer5.Enabled = autoExp;
+        }
 
+        private void FarmExp()
+        {
+            string result = "";
+            result = ScarifyForce(uIdx, "0");
+            getBagInfo();
+            BagItem newBagItem = new BagItem(GetBagItemModel("137"));
+            if (_autoSeed && (Convert.ToInt32(newBagItem.amount) == 0))
+            {
+                buySeed("137", "1");
+            }
+            else
+            { }
+            string content = Plant("137", uIdx, "0");
+            DoResult doResultItem = new DoResult(content);
+            autoExp = doResultItem.exp.Equals("0") ? false : true;
+            if (autoExp)
+            {
+                toLog("获取成功" + doResultItem.exp + "点经验");
+            }
+            else
+            {
+                toLog("经验已满，停止工作");
+            }
+        }
+
+        private void timer5_Tick(object sender, EventArgs e)
+        {
+            if (autoExp && farmExpTimes > 0)
+            {
+                if (threadTest == null || !threadTest.IsAlive)
+                {
+                    threadTest = new Thread(new ThreadStart(FarmExp));
+                    threadTest.Start();
+                    farmExpTimes--;
+                }
+            }
+        }
+        #endregion
         
     }    
 }
