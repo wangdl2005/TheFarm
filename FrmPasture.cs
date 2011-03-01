@@ -1003,7 +1003,7 @@ namespace MyFarm
             string exp = "";
             int level = 0;
             FriendFilterP newFriendsFilter = new FriendFilterP();
-            if (_friendsFliterP != null)
+            if (_friendsFliterP != null && _friendsFliterP.GetCollection().Count > 0)
             {
                 //双缓冲实现
                 //// create a temp dataTable to store data

@@ -358,6 +358,7 @@ namespace TheStatus
         public string totalCome
         { get { return PastureStatus.GetValue("totalCome"); } }
     }
+
     class FriendFilterP
     {
         public FriendFilterP()
@@ -402,5 +403,43 @@ namespace TheStatus
         { get { return doStatusInfo.ContainsKey("3") ? "可除虫" : ""; ;} }
         public string waterStatus
         { get { return doStatusInfo.ContainsKey("4") ? "可浇水" : ""; ;} }
+    }
+
+    class DoResultP
+    {
+        JsonObject resultInfo = new JsonObject();
+        public string farmlandIndex
+        { get { return resultInfo.GetValue("farmlandIndex"); } }
+        public string code
+        { get { return resultInfo.GetValue("code"); } }
+        public string direction
+        { get { return resultInfo.GetValue("direction"); } }//新手指南，其他情况下为空
+        public string exp
+        { get { return resultInfo.GetValue("exp"); } }//本动作获取的经验
+        public string levelUp
+        { get { return resultInfo.GetValue("levelUp"); } }//玩家是否升级
+        public string money
+        { get { return resultInfo.GetValue("money"); } }//本动作获取的金钱
+        public string poptype
+        { get { return resultInfo.GetValue("poptype"); } }
+        public string weed
+        { get { return resultInfo.GetValue("weed"); } }//草
+        public string pest
+        { get { return resultInfo.GetValue("pest"); } }//虫
+        public string humidity
+        { get { return resultInfo.GetValue("humidity"); } }//水
+        public string harvest
+        { get { return resultInfo.GetValue("harvest"); } }//收获、偷取的个数
+        public DoResultP(string content)
+        {
+            this.resultInfo = new JsonObject(content);
+        }
+        public DoResultP(JsonObject json)
+        {
+            if (json != null)
+            {
+                this.resultInfo = json;
+            }
+        }
     }
 }

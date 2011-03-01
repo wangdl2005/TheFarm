@@ -1247,30 +1247,30 @@ namespace MyFarm
             string exp = "";
             int level = 0;
             FriendFilter newFriendsFilter = new FriendFilter();
-            if (_friendsFliter != null)
+            if (_friendsFliter != null && _friendsFliter.GetCollection().Count > 0)
             {
                 //双缓冲实现
                 //// create a temp dataTable to store data
                 DataTable dt = new DataTable();
                 DataRow dr;
-                dt.Columns.Add("id",typeof(String));
+                dt.Columns.Add("id", typeof(String));
                 dt.Columns.Add("userId", typeof(String));
                 dt.Columns.Add("userName", typeof(String));
                 dt.Columns.Add("level", typeof(String));
                 dt.Columns.Add("money", typeof(String));
-                dt.Columns.Add("canDoStatus",typeof(String));
+                dt.Columns.Add("canDoStatus", typeof(String));
                 //dt.Columns.Add("exp", typeof(String));
-                dt.Columns.Add("lastTime",typeof(String));
-	            for(int i = 0 ;i< _friendsFliter.GetCollection().Count; i++)
+                dt.Columns.Add("lastTime", typeof(String));
+                for (int i = 0; i < _friendsFliter.GetCollection().Count; i++)
                 {
                     newFriendsFilter.userId = _friendsFliter.GetKey(i);
                     newFriendsFilter.doStatus = new DoStatus(new JsonObject(_friendsFliter.GetValue(i)));
                     User _friendsInfo = new User(GetUserModel(newFriendsFilter.userId));
                     exp = _friends.GetCollection()[i].GetValue("exp");
-                    exp = FormatExp(Convert.ToInt32(exp),out level);
+                    exp = FormatExp(Convert.ToInt32(exp), out level);
                     string theDoStatus = newFriendsFilter.doStatus.theDoStatus;
                     dr = dt.NewRow();
-                    dr[0] = (i+1).ToString();
+                    dr[0] = (i + 1).ToString();
                     dr[1] = _friendsInfo.userId;
                     dr[2] = _friendsInfo.userName;
                     dr[3] = level.ToString();
@@ -1283,53 +1283,53 @@ namespace MyFarm
 
 
                 // loop the temp table , and insert to ListView
-                int iSize = (dt.Rows.Count>1000)?1000:dt.Rows.Count;
-                   
+                int iSize = (dt.Rows.Count > 1000) ? 1000 : dt.Rows.Count;
+
                 ListViewItem lvi;
                 ListViewItem[] lvitems = new ListViewItem[iSize];
-                for (int i = 0; i < iSize; i++)                    
+                for (int i = 0; i < iSize; i++)
                 {
-                    lvi = new ListViewItem(new string[] { dt.Rows[i][0].ToString(), dt.Rows[i][1].ToString(), dt.Rows[i][2].ToString(), dt.Rows[i][3].ToString(),dt.Rows[i][4].ToString(),dt.Rows[i][5].ToString(),dt.Rows[i][6].ToString()});
-                    lvitems[i] = lvi;                   
+                    lvi = new ListViewItem(new string[] { dt.Rows[i][0].ToString(), dt.Rows[i][1].ToString(), dt.Rows[i][2].ToString(), dt.Rows[i][3].ToString(), dt.Rows[i][4].ToString(), dt.Rows[i][5].ToString(), dt.Rows[i][6].ToString() });
+                    lvitems[i] = lvi;
                 }
                 this.Invoke((MethodInvoker)delegate
                 {
                     listViewFriendsFilter.Items.AddRange(lvitems);
                 });
-                
-            /*
-                for (int i = 0; i < _friendsFliter.GetCollection().Count; i++)
-                {
-                    newFriendsFilter.userId = _friendsFliter.GetKey(i);
-                    newFriendsFilter.doStatus = new DoStatus(new JsonObject(_friendsFliter.GetValue(i)));
-                    User _friendsInfo = new User(GetUserModel(newFriendsFilter.userId));
-                    ListViewItem lv = new ListViewItem();
-                    lv.SubItems[0].Text = (i + 1).ToString();
-                    /*
-                    lv.SubItems.Add(_friends.GetCollection()[i].GetValue("userId"));
-                    lv.SubItems.Add(_friends.GetCollection()[i].GetValue("userName"));
-                    exp = _friends.GetCollection()[i].GetValue("exp");
-                    exp = FormatExp(Convert.ToInt32(exp),out level);
-                    lv.SubItems.Add(level.ToString());
-                    lv.SubItems.Add(_friends.GetCollection()[i].GetValue("money"));
-                    lv.SubItems.Add(exp);
-                     */
-            /*
-                    string theDoStatus = newFriendsFilter.doStatus.theDoStatus;
-                    lv.SubItems.Add(_friendsInfo.userId);
-                    lv.SubItems.Add(_friendsInfo.userName);
-                    exp = _friendsInfo.exp;
-                    exp = FormatExp(Convert.ToInt32(exp), out level);
-                    lv.SubItems.Add(level.ToString());
-                    lv.SubItems.Add(_friendsInfo.money);
-                    lv.SubItems.Add(theDoStatus);
-                    lv.SubItems.Add(DateTime.Now.ToString());
-                    this.Invoke((MethodInvoker)delegate
+
+                /*
+                    for (int i = 0; i < _friendsFliter.GetCollection().Count; i++)
                     {
-                        listViewFriendsFilter.Items.Add(lv);
-                    });
-                }
-                */  
+                        newFriendsFilter.userId = _friendsFliter.GetKey(i);
+                        newFriendsFilter.doStatus = new DoStatus(new JsonObject(_friendsFliter.GetValue(i)));
+                        User _friendsInfo = new User(GetUserModel(newFriendsFilter.userId));
+                        ListViewItem lv = new ListViewItem();
+                        lv.SubItems[0].Text = (i + 1).ToString();
+                        /*
+                        lv.SubItems.Add(_friends.GetCollection()[i].GetValue("userId"));
+                        lv.SubItems.Add(_friends.GetCollection()[i].GetValue("userName"));
+                        exp = _friends.GetCollection()[i].GetValue("exp");
+                        exp = FormatExp(Convert.ToInt32(exp),out level);
+                        lv.SubItems.Add(level.ToString());
+                        lv.SubItems.Add(_friends.GetCollection()[i].GetValue("money"));
+                        lv.SubItems.Add(exp);
+                         */
+                /*
+                        string theDoStatus = newFriendsFilter.doStatus.theDoStatus;
+                        lv.SubItems.Add(_friendsInfo.userId);
+                        lv.SubItems.Add(_friendsInfo.userName);
+                        exp = _friendsInfo.exp;
+                        exp = FormatExp(Convert.ToInt32(exp), out level);
+                        lv.SubItems.Add(level.ToString());
+                        lv.SubItems.Add(_friendsInfo.money);
+                        lv.SubItems.Add(theDoStatus);
+                        lv.SubItems.Add(DateTime.Now.ToString());
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            listViewFriendsFilter.Items.Add(lv);
+                        });
+                    }
+                    */
             }
         }
         #endregion
