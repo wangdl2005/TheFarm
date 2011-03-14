@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-//using System.Linq;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Net;
@@ -1266,7 +1266,7 @@ namespace MyFarm
                     newFriendsFilter.userId = _friendsFliter.GetKey(i);
                     newFriendsFilter.doStatus = new DoStatus(new JsonObject(_friendsFliter.GetValue(i)));
                     User _friendsInfo = new User(GetUserModel(newFriendsFilter.userId));
-                    exp = _friends.GetCollection()[i].GetValue("exp");
+                    exp = _friendsInfo.exp;
                     exp = FormatExp(Convert.ToInt32(exp), out level);
                     string theDoStatus = newFriendsFilter.doStatus.theDoStatus;
                     dr = dt.NewRow();
@@ -2688,7 +2688,7 @@ namespace MyFarm
             {
                 threadGetFriends = new Thread(new ThreadStart(ListFriends));
                 threadGetFriends.Start();
-                timeRunFriends = Convert.ToInt32(txtTimeFriends.Text.Trim()) * 60;
+                timeRunFriends = Convert.ToInt32(txtTimeFriends.Text.Trim());
             }
             timeGetFriendsFilter--;
             if (timeGetFriendsFilter <= 0)
@@ -2735,18 +2735,24 @@ namespace MyFarm
             {
                 farmExpTimes = Convert.ToInt32(txtFarmExpTimes.Text);
                 autoExp = true;
+                lbtnFarmExp.Text = "停止刷农场经验";
             }
             else
             {
                 autoExp = false;
+                lbtnFarmExp.Text = "刷农场经验";
             }
             timer5.Enabled = autoExp;
         }
 
         private void FarmExp()
         {
+            string place = "";
+            this.Invoke((MethodInvoker)delegate {
+                place = txtPlaceNum.Text.Trim();
+            });
             string result = "";
-            result = ScarifyForce(uIdx, "0");
+            result = ScarifyForce(uIdx, place);
             getBagInfo();
             BagItem newBagItem = new BagItem(GetBagItemModel("137"));
             if (_autoSeed && (Convert.ToInt32(newBagItem.amount) == 0))
@@ -2755,7 +2761,7 @@ namespace MyFarm
             }
             else
             { }
-            string content = Plant("137", uIdx, "0");
+            string content = Plant("137", uIdx, place);
             DoResult doResultItem = new DoResult(content);
             autoExp = doResultItem.exp.Equals("0") ? false : true;
             if (autoExp)
@@ -2779,8 +2785,18 @@ namespace MyFarm
                     farmExpTimes--;
                 }
             }
+            else if (farmExpTimes == 0)
+            {
+                toLog("刷经验完成");
+                farmExpTimes = -1;
+            }
         }
         #endregion
+
+        private void btnBuySeed_Click(object sender, EventArgs e)
+        {
+            buySeed(cId, "1");
+        }
         
     }    
 }

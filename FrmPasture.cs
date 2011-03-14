@@ -14,6 +14,8 @@ using System.IO;
 using System.Threading;
 using TheStatus;
 using System.Web;
+using Item;
+using Time;
 
 namespace MyFarm
 {
@@ -36,16 +38,44 @@ namespace MyFarm
         JsonObject model; //json模板
         JsonObject _pastureStatus;//当前牧场信息
         JsonObject enemyJson = new JsonObject();//当前牧场敌人信息
+        JsonObject badInfoJson;//当前农场蚊子大便信息
         JsonObject _friendsP; //好友列表
-        Thread threadGetUserInfoP, threadGetFriendsP, threadGetFriendsFilterP;
+        Thread threadGetUserInfoP, threadGetFriendsP, threadGetFriendsFilterP,threadTest,threadPickFriendsFilterList;
         JsonObject _friendsFliterP;//可操作好友列表
         JsonObject _bagStatusP;//用户背包信息
         JsonObject _repertoryStatusP;// 用户仓库信息
         string _friendsIdsP = ""; //好友 ID集合
         string _friendsUInXP = "";//好友 uInX集合;
-        string cIdP = "1001";//默认动物
+        string cIdP = "1040";//默认动物
         Dictionary<string, string> configDictP = new Dictionary<string, string>();//配置字典
         JsonObject _shopP; //商店
+        int pastureExpTimes = 0;
+        bool autoExp = true;
+        bool _autoPostProduct = true;//自动赶去生产
+        bool _autoRaiseBeast = true; //自动放牛 
+        bool _autoFightMouse = true; //自动杀鼠 
+        bool _autoShit = true; //自动拾大便
+        bool _autoKillMosquito = true; //自动杀蚊子
+        bool _autoStealAnimal = true; //自动偷取
+        bool _autoBuyAnimal = true; //自动买幼仔
+        bool _autoBag = true; //查看背包
+        bool _autoDog = false;
+        bool _autoCancel = true;//无经验自动取消除草。。
+
+        bool _autoUserInfoBool = false;//用户信息刷新是否自动执行
+        int timeUserInfoGo = 0;//用户信息刷新经过时间
+        int _userInfoUpTime = 60 * 5;//用户信息刷新时间
+
+        bool _autoWookBool = false; //是否工作
+        int _autoWorkTime = 0;//工作执行时间
+        int _restTime = 0;
+        int timeInterval = 0;  //扫描每个好友的间隔
+        int timeToWork = 3600; //工作需执行的时间
+        int timeToRest = 600; //休息的时间
+        int timeRunFriends = 7200;//扫描好友时间
+        int timeGetMature = 0;//获取成熟列表时间
+        int timeGetFriendsFilter = 120;//获取可操作好友列表时间
+
         #endregion
 
         #region 页面初始化
@@ -75,6 +105,9 @@ namespace MyFarm
             Thread threadGetUserAndFriends = new Thread(new ThreadStart(this.GetUserAndFriends));
             //threadGetFriendsP.Start();
             threadGetUserAndFriends.Start();
+            timer2.Enabled = false;
+            //timer1.Enabled = false;
+            timer3.Enabled = true;  
         }
 
         private void FrmPasture_FormClosed(object sender, FormClosedEventArgs e)
@@ -141,15 +174,16 @@ namespace MyFarm
                 #endregion
 
                 #region 抓去生产??
-                private void PostProductP(string serial)
+                private string PostProductP(string serial)
                 {
                     string url = runUrl + "/bbs/source/plugin/qqfarm/core/mymc.php?mod=cgi_post_product";
                     string farmTime = TheKey.GetFarmTime();
                     string pastureKey = TheKey.GetPastureKey(farmTime, pastureKeyEncodeString);
                     string postData = "serial=" + serial + "&pastureKey=" + pastureKey + "&farmKey=null&farmTime=" + farmTime + "&uIdx=" + uIdx;
+                    string content = "";
                     try
                     {
-                        string content = HttpChinese.GetHtml(postData, cookie, url);
+                        content = HttpChinese.GetHtml(postData, cookie, url);
                         if (content.Contains("addExp"))
                         {
                             toLogP("赶成功");
@@ -164,16 +198,19 @@ namespace MyFarm
                         toLogP(e.Message);
                         toLogP("赶失败");
                     }
+                    return content;
                 }
-                private void PostProductP(string serial ,string usrName)
+                private string PostProductP(string uid,string serial ,string usrName)
                 {
                     string url = runUrl + "/bbs/source/plugin/qqfarm/core/mymc.php?mod=cgi_post_product";
                     string farmTime = TheKey.GetFarmTime();
                     string pastureKey = TheKey.GetPastureKey(farmTime, pastureKeyEncodeString);
-                    string postData = "serial=" + serial + "&pastureKey=" + pastureKey + "&farmKey=null&farmTime=" + farmTime + "&uIdx=" + uIdx + "&nick=" + HttpUtility.UrlEncode(usrName);
+                    //pastureKey=09495be7a3711fc011ba90dd1716e2fe855957ba&farmKey=null&farmTime=1300007525&uId=188985&uIdx=19991&serial=6&nick=%E7%8E%8B%E7%A3%8A
+                    string postData = "serial=" + serial + "&pastureKey=" + pastureKey + "&farmKey=null&farmTime=" + farmTime + "&uIdx=" + uIdx + "&uId=" + uid + "&nick=" + HttpUtility.UrlEncode(usrName);
+                    string content = "";
                     try
                     {
-                        string content = HttpChinese.GetHtml(postData, cookie, url);
+                        content = HttpChinese.GetHtml(postData, cookie, url);
                         if (content.Contains("addExp"))
                         {
                             toLogP("赶成功");
@@ -188,6 +225,7 @@ namespace MyFarm
                         toLogP(e.Message);
                         toLogP("赶失败");
                     }
+                    return content;
                 }
                 #endregion
 
@@ -307,6 +345,7 @@ namespace MyFarm
                     try
                     {
                         string content = HttpChinese.GetHtml(postData, cookie, url);
+                        toLogP("购买成功");
                         return content;
                     }
                     catch (Exception e)
@@ -399,14 +438,37 @@ namespace MyFarm
                     catch (Exception e)
                     {
                         toLogP(e.Message);
-                        toLogP("拍死蚊子失败");
+                        toLogP("放牛失败");
+                        return "";
+                    }
+                }
+                #endregion
+
+                #region 捐赠农产品
+                private string DonateAnimal(string serial)
+                {
+                    string url = runUrl + "/bbs/source/plugin/qqfarm/core/mymc.php?mod=cgi_donate_animal";
+                    string farmTime = TheKey.GetFarmTime();
+                    //pastureKey=9d0b144f9d3fe81509c6053275248179e57c5dda&farmKey=null&farmTime=1300093000&serial=3&uIdx=188880
+                    string pastureKey = TheKey.GetPastureKey(farmTime, pastureKeyEncodeString);
+                    string postData = "pastureKey=" + pastureKey + "&farmKey=null&farmTime=" + farmTime + "&serial=" + serial + "&uIdx=" + uIdx;
+                    try
+                    {
+                        string content = HttpChinese.GetHtml(postData, cookie, url);
+                        toLogP("捐赠成功");
+                        return content;
+                    }
+                    catch (Exception e)
+                    {
+                        toLogP(e.Message);
+                        toLogP("捐赠失败");
                         return "";
                     }
                 }
                 #endregion
             #endregion
 
-            #region 信息操作
+                #region 信息操作
 
                 #region 用户信息
                 private void GetUserInfoP()
@@ -457,6 +519,7 @@ namespace MyFarm
                         //以下获得农场信息
                         _pastureStatus = new JsonObject(_statusP.GetValue("animal"));
                         enemyJson = new JsonObject(_statusP.GetValue("enemy"));
+                        badInfoJson = new JsonObject(_statusP.GetValue("badinfo"));
                         //showPasture(_pastureStatus);
                         showIdP = uIdx;
                         toLogP("获得用户牧场信息成功");
@@ -496,7 +559,7 @@ namespace MyFarm
                 #region 好友信息
                 private JsonObject GetFUserInfo(string id)
                 {
-                    string url = runUrl +  "bbs/source/plugin/qqfarm/core/mymc.php?mod=cgi_enter?";                    
+                    string url = runUrl +  "/bbs/source/plugin/qqfarm/core/mymc.php?mod=cgi_enter?";                    
                     string ownerId = id;
                     User _friendInfo = new User(GetUserModel(id));
                     string uinX = _friendInfo.uin;
@@ -521,7 +584,7 @@ namespace MyFarm
 
                 private JsonObject GetFUserInfo(string id, out JsonObject enemyJson)
                 {
-                    string url = "http://www.szshbs.com/bbs/source/plugin/qqfarm/core/mync.php?mod=user&act=run";
+                    string url = runUrl + "/bbs/source/plugin/qqfarm/core/mymc.php?mod=cgi_enter?";
                     string ownerId = id;
                     User _friendInfo = new User(GetUserModel(id));
                     string uinX = _friendInfo.uin;
@@ -543,8 +606,64 @@ namespace MyFarm
                         toLogP("指定用户信息获取失败");
                         enemyJson = new JsonObject();
                     }
-                    return new JsonObject(tempJson);
+                    return tempJson;
                 }
+
+                private JsonObject GetFUserInfo(string id, out JsonObject enemyJson,out JsonObject badInfoJson)
+                {
+                    string url = runUrl + "/bbs/source/plugin/qqfarm/core/mymc.php?mod=cgi_enter?";
+                    string ownerId = id;
+                    User _friendInfo = new User(GetUserModel(id));
+                    string uinX = _friendInfo.uin;
+                    string farmTime = TheKey.GetFarmTime();
+                    string postData = "flag=1&pastureKey=" + TheKey.GetPastureKey(farmTime, pastureKeyEncodeString) + "&farmKey=null&farmTime="
+                        + farmTime + "&newitem=2&uId=" + id + "&uIdx=" + uIdx;
+                    string content = "";
+                    JsonObject tempJson = new JsonObject();
+                    try
+                    {
+                        content = HttpChinese.GetHtml(postData, cookie, url);
+                        JsonObject farmJson = new JsonObject(content);
+                        tempJson = new JsonObject(farmJson.GetValue("animal"));
+                        enemyJson = new JsonObject(farmJson.GetValue("enemy"));
+                        badInfoJson = new JsonObject(farmJson.GetValue("badinfo"));
+                    }
+                    catch (Exception except)
+                    {
+                        toLogP(except.Message);
+                        toLogP("指定用户信息获取失败");
+                        enemyJson = new JsonObject();
+                        badInfoJson = new JsonObject();
+                    }
+                    return tempJson;
+                }
+
+                /*private JsonObject GetFUserInfo(string id, out JsonObject badInfoJson)
+                {
+                    string url = runUrl + "/bbs/source/plugin/qqfarm/core/mymc.php?mod=cgi_enter?";
+                    string ownerId = id;
+                    User _friendInfo = new User(GetUserModel(id));
+                    string uinX = _friendInfo.uin;
+                    string farmTime = TheKey.GetFarmTime();
+                    string postData = "flag=1&pastureKey=" + TheKey.GetPastureKey(farmTime, pastureKeyEncodeString) + "&farmKey=null&farmTime="
+                        + farmTime + "&newitem=2&uId=" + id + "&uIdx=" + uIdx;
+                    string content = "";
+                    JsonObject tempJson = new JsonObject();
+                    try
+                    {
+                        content = HttpChinese.GetHtml(postData, cookie, url);
+                        JsonObject farmJson = new JsonObject(content);
+                        tempJson = new JsonObject(farmJson.GetValue("animal"));
+                        badInfoJson = new JsonObject(farmJson.GetValue("badinfo"));
+                    }
+                    catch (Exception except)
+                    {
+                        toLogP(except.Message);
+                        toLogP("指定用户信息获取失败");
+                        badInfoJson = new JsonObject();
+                    }
+                    return tempJson;
+                }*/
                 #endregion
 
                 #region 获取可操作好友信息
@@ -668,7 +787,7 @@ namespace MyFarm
                     string farmTime = TheKey.GetFarmTime();
                     string pastureKey = TheKey.GetPastureKey(farmTime, pastureKeyEncodeString);
                     string url = runUrl + "/bbs/source/plugin/qqfarm/core/mymc.php?mod=cgi_sale_product";
-                    string postData = "farmTime=1298529760&pastureKey=5b201abdbaeac64b6827d6e18e1a4c0b60eaba9c&farmKey=null&saleAll=1&uIdx=188880";
+                    string postData = "farmTime=" + farmTime + "&pastureKey=" + pastureKey + "&farmKey=null&saleAll=1&uIdx=" + uIdx;
                     try
                     {
                         string content = HttpChinese.GetHtml(postData, cookie, url);
@@ -678,6 +797,25 @@ namespace MyFarm
                     {
                         toLogP(except.Message);
                         toLogP("卖掉仓库物品失败");
+                    }
+                }
+                //
+                private void SellProduct(string cid,string cName,string num)
+                {
+                    string farmTime = TheKey.GetFarmTime();
+                    string pastureKey = TheKey.GetPastureKey(farmTime, pastureKeyEncodeString);
+                    string url = runUrl + "/bbs/source/plugin/qqfarm/core/mymc.php?mod=cgi_sale_product";
+                    //pastureKey=8320d61eb9a97e492a4d7fee56239e8090207f42&uIdx=19991&farmKey=null&farmTime=1300070055&num=5&cId=1003
+                    string postData = "pastureKey=" + pastureKey + "&uIdx=" + uIdx + "&farmKey=null&farmTime=" + farmTime + "&num=" + num + "&cId=" + cid;
+                    try
+                    {
+                        string content = HttpChinese.GetHtml(postData, cookie, url);
+                        toLogP("卖掉仓库物品" + cName + "成功" + "，获得" + new JsonObject(content).GetValue("money") + "金币");
+                    }
+                    catch (Exception except)
+                    {
+                        toLogP(except.Message);
+                        toLogP("卖掉仓库物品" + cName + "失败");
                     }
                 }
                 #endregion
@@ -708,7 +846,7 @@ namespace MyFarm
         #region 牧场方法调用函数
         private void PastureHarvest(string userId, JsonObject thePastureStatus)
         {
-            string cropStatus = "";
+            //string animalStatus = "";
             string result = "";
             User friendInfo = new User(GetUserModel(userId));
             string enemyId = "";
@@ -720,76 +858,161 @@ namespace MyFarm
                 if (userId.Equals(uIdx))
                 {
                     for (int i = 0; i < thePastureStatus.GetCollection().Count; i++)
-                    {/*
-                        Land newLand = new Land(thePastureStatus.GetCollection()[i]);
+                    {
+                        AnimalStatus newAnimalStatus = new AnimalStatus(thePastureStatus.GetCollection()[i]);
                         bool landDogFlag = true; //true表示可偷，false表示不可偷
                         //自己的地尽管偷
-                        //无狗 无狗粮
-                        
+                        //无狗 无狗粮                        
                         if (landDogFlag)
                         {
-                            GetCropStatus(out cropStatus, newLand);
-                            if (cropStatus.Equals("无") || cropStatus.Equals("已枯萎") || regexMature.IsMatch(cropStatus) || cropStatus.Equals("已摘取"))
+                           /* GetCropStatus(out animalStatus, newAnimalStatus);
+                            if (animalStatus.Equals("饥饿") || animalStatus.Equals("生产中") || animalStatus.Equals("成长中"))
                             {
                             }
-                            else
+                            else*/
+                            if(!newAnimalStatus.totalCome.Equals("0"))
                             {
-                                result = Harvest(userId, i.ToString());
-                                DoResult doResultItem = new DoResult(result);
-                                if (result.Contains("\"farmlandIndex\":" + i.ToString() + ",\"harvest\":"))
+                                result = HarvestAllProductP();
+                                if (result.Contains("[["))
                                 {
-                                    toLog("收获" + friendInfo.userName + "的农场的第" + i.ToString() + "号地的"
-                                        + new CropItem(GetCropModel(newLand.a)).cName + "一共" + doResultItem.harvest + "个");
+                                    toLogP("收获" + friendInfo.userName + "的牧场的第" + newAnimalStatus.serial + "号"
+                                        + new AnimalItem(GetAnimalModel(newAnimalStatus.cId)).cName + "成功");
 
-                                    saveAch(0, 0, 0, newLand.a, doResultItem.harvest);
+                                    //saveAch(0, 0, 0, newLand.a, doResultItem.harvest);
                                 }
                                 else
                                 {
-                                    toLog("收获" + friendInfo.userName + "的农场的第" + i.ToString() + "号地失败");
+                                    toLogP("收获" + friendInfo.userName + "的牧场的第" + newAnimalStatus.serial + "号动物失败");
                                 }
 
                             }
-                        }*/
+                        }
                     }
                 }
                 else
                 {
                     for (int i = 0; i < thePastureStatus.GetCollection().Count; i++)
-                    {/*
-                        Land newLand = new Land(thePastureStatus.GetCollection()[i]);
-                        bool landDogFlag = true; //true表示可偷，false表示不可偷
+                    {
+                        AnimalStatus newAnimalStatus = new AnimalStatus(thePastureStatus.GetCollection()[i]);
+                        bool landDogFlag = true; //true表示可偷，false表示不可偷                           
                         //无狗 无狗粮
                         if (_autoDog)
                         {
-                            landDogFlag = (dogId.Equals("0") || isHungry.Equals("1"));
-                            toLog(friendInfo.userName + "的农场有狗,不偷");
+                            landDogFlag = (enemyId.Equals("0") || isHungry.Equals("1"));
+                            toLogP(friendInfo.userName + "的农场有猎人,不偷");
                         }
                         if (landDogFlag)
                         {
-                            GetCropStatus(out cropStatus, newLand);
-                            if (cropStatus.Equals("无") || cropStatus.Equals("已枯萎") || regexMature.IsMatch(cropStatus) || cropStatus.Equals("已摘取"))
+                            //GetCropStatus(out animalStatus, newAnimalStatus);
+                            /*if (animalStatus.Equals("饥饿") || animalStatus.Equals("生产中") || animalStatus.Equals("成长中"))
                             {
                             }
                             else
+                            {*/
+                            if(!newAnimalStatus.totalCome.Equals("0"))
                             {
-                                result = Steal(userId, i.ToString());
-                                DoResult doResultItem = new DoResult(result);
-                                if (result.Contains("\"farmlandIndex\":" + i.ToString() + ",\"harvest\":"))
+                                result = StealAllP(userId, friendInfo.userName);
+                                if (!result.Contains("[" + newAnimalStatus.cId + ",0]"))
                                 {
-                                    toLog("摘取" + friendInfo.userName + "的农场的第" + i.ToString() + "号地的"
-                                        + new CropItem(GetCropModel(newLand.a)).cName + "一共" + doResultItem.harvest + "个");
+                                    toLogP("偷取" + friendInfo.userName + "的牧场的第" + newAnimalStatus.serial + "号"
+                                        + new AnimalItem(GetAnimalModel(newAnimalStatus.cId)).cName.Replace("\0", "") + "成功");
 
-                                    saveAch(0, 0, 0, newLand.a, doResultItem.harvest);
+                                    //saveAch(0, 0, 0, newLand.a, doResultItem.harvest);
                                 }
                                 else
                                 {
-                                    toLog("摘取" + friendInfo.userName + "的农场的第" + i.ToString() + "号地失败");
+                                    toLogP("偷取" + friendInfo.userName + "的牧场的第" + newAnimalStatus.serial + "号动物失败");
                                 }
+
                             }
-                        }*/
+                        }
                     }
                 }
             }
+        }
+
+        private void PasturePostProduct(string userId, JsonObject thePastureStatus)
+        {
+            string animalStatus = "";
+            string result = "";
+            User friendInfo = new User(GetUserModel(userId));
+            if (!userId.Equals(""))
+            {
+                for (int i = 0; i < thePastureStatus.GetCollection().Count; i++)
+                {
+                    AnimalStatus newAnimalStatus = new AnimalStatus(thePastureStatus.GetCollection()[i]);
+                    GetCropStatus(out animalStatus, newAnimalStatus);
+                   if(animalStatus.Equals("可赶去"))
+                   {
+                        result = PostProductP(userId,newAnimalStatus.serial,friendInfo.userName);
+                        if (result.Contains("{\"addExp\":"))
+                        {
+                            toLogP("赶" + friendInfo.userName + "的牧场的第" + newAnimalStatus.serial + "号"
+                                + new AnimalItem(GetAnimalModel(newAnimalStatus.cId)).cName.Replace("\0", "") + "成功");
+
+                            //saveAch(0, 0, 0, newLand.a, doResultItem.harvest);
+                        }
+                        else
+                        {
+                            toLogP("赶" + friendInfo.userName + "的牧场的第" + newAnimalStatus.serial + "号动物失败");
+                        }
+
+                    }
+                }
+            }                
+        }
+
+        private void PastureKillMosquitoP(string userId, JsonObject thePastureStatus)
+        {
+            string result = "";
+            User friendInfo = new User(GetUserModel(userId));
+            if (!userId.Equals(""))
+            {
+                GetFUserInfo(userId, out enemyJson, out badInfoJson);
+                BadInfo newBadInfo = new BadInfo(badInfoJson);
+                if (!newBadInfo.numOfMosquito.Equals("0"))
+                {
+                    result = KillMosquitoP(userId, "1", newBadInfo.numOfMosquito);
+                    if (result.Contains("{\"addExp\":"))
+                    {
+                        toLogP("拍掉" + friendInfo.userName + "的牧场的蚊子成功");
+
+                        //saveAch(0, 0, 0, newLand.a, doResultItem.harvest);
+                    }
+                    else
+                    {
+                        toLogP("拍掉" + friendInfo.userName + "的牧场的蚊子失败");
+                    }
+
+                }   
+            }   
+        }
+
+        private void PastureGetShitsP(string userId, JsonObject thePastureStatus)
+        {
+            string result = "";
+            User friendInfo = new User(GetUserModel(userId));
+            if (!userId.Equals(""))
+            {
+                GetFUserInfo(userId, out enemyJson, out badInfoJson);
+                BadInfo newBadInfo = new BadInfo(badInfoJson);
+                while (!newBadInfo.numOfShit.Equals("0"))
+                {
+                    result = GetShitsP(userId, "0", newBadInfo.numOfShit);
+                    if (result.Contains("{\"num\":"))
+                    {
+                        toLogP("捡取" + friendInfo.userName + "的牧场的大便成功");
+
+                        //saveAch(0, 0, 0, newLand.a, doResultItem.harvest);
+                    }
+                    else
+                    {
+                        toLogP("捡取" + friendInfo.userName + "的牧场的大便失败");
+                    }
+                    GetFUserInfo(userId, out enemyJson, out badInfoJson);
+                    newBadInfo = new BadInfo(badInfoJson);
+                }
+            }  
         }
 
         #endregion
@@ -816,31 +1039,23 @@ namespace MyFarm
 
         #region 牧场窝、棚信息操作
         private void GetCropStatus(out string animalStatus, AnimalStatus newAnimalStatus)
-        {
-            /*
-            if (newAnimalStatus.b.Equals("7"))
+        {            
+            if (!newAnimalStatus.hungry.Equals("0"))
             {
-                cropStatus = "已枯萎";
+                animalStatus = "饥饿";
             }
-            else if (newLand.b.Equals("0"))
+            else if (newAnimalStatus.status.Equals("3"))
             {
-                cropStatus = "无";
+                animalStatus = "可赶去";
             }
-            else if (newLand.m.Equals("0"))
+            else if (newAnimalStatus.status.Equals("5") || newAnimalStatus.status.Equals("1"))
             {
-
-                cropStatus = "第" + (Convert.ToInt32(newLand.j) + 1).ToString() + "季";
-            }
-            else if (newLand.n.Contains(uIdx))
-            {
-                cropStatus = "已摘取";
+                animalStatus = "成长中";
             }
             else
             {
-                cropStatus = newLand.m.Equals(newLand.l) ? "已摘完" : (newLand.m + "/" + newLand.k);
+                animalStatus = "";
             }
-             * */
-            animalStatus = "";
         }
         #endregion
 
@@ -880,6 +1095,17 @@ namespace MyFarm
                 throw except;
             }
         }
+
+        #region 获得指定动物的信息
+        private Dictionary<string, string> GetAnimalModel(string cid)
+        {
+            if (_animal.ContainsKey(cid))
+            {
+                return _animal[cid];
+            }
+            return null;
+        }
+        #endregion
         #endregion
 
         #region 用户信息操作
@@ -896,6 +1122,36 @@ namespace MyFarm
             return null;
         }
         #endregion   
+
+        #region 显示动物信息
+        private void showAnimalInfo(JsonObject _pastureStatus)
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                listViewFarmland.Items.Clear();
+            });
+            for (int i = 0; i < _pastureStatus.GetCollection().Count; i++)
+            {
+                ListViewItem lv = new ListViewItem();
+                AnimalStatus newAnimal = new AnimalStatus(_pastureStatus.GetCollection()[i]);
+                AnimalItem newAnimalItem = new AnimalItem(GetAnimalModel(newAnimal.cId));
+                string animalStatus = "";
+                GetCropStatus(out animalStatus, newAnimal);
+                //lv.SubItems.Add(newLand.b.Equals("0") ? "空地":newShopItem.cName);
+                lv.SubItems[0].Text = newAnimal.serial;
+                lv.SubItems.Add(newAnimalItem.cName);
+                lv.SubItems.Add(newAnimal.status);
+                lv.SubItems.Add(TimeFormat.FormatTime(newAnimal.buyTime));               
+                lv.SubItems.Add(TimeFormat.FormatTimeToHHMMSS(Convert.ToInt32(newAnimal.growTimeNext)));
+                lv.SubItems.Add(animalStatus);
+                lv.SubItems.Add(newAnimal.totalCome);
+                this.Invoke((MethodInvoker)delegate
+                {
+                    listViewFarmland.Items.Add(lv);
+                });
+            }
+        }
+        #endregion
         #endregion
 
         #region 好友列表操作
@@ -969,9 +1225,41 @@ namespace MyFarm
         private void GetUserAndFriends()
         {
             GetUserInfoP();
+            showAnimalInfo(_pastureStatus);
             ListFriends();
         }
         #endregion
+
+
+        private void listViewFriends_DoubleClick(object sender, EventArgs e)
+        {
+            //获得当前行 
+            int iRowCurr = this.listViewFriends.SelectedItems[0].Index;
+            //取得当前行的数据 
+            string id = listViewFriends.SelectedItems[0].SubItems[1].Text;
+            string userName = listViewFriends.SelectedItems[0].SubItems[2].Text;
+            _pastureStatus = GetFUserInfo(id, out enemyJson);
+            showAnimalInfo(_pastureStatus);
+            showIdP = id;
+            toLogP("获取" + userName + "土地信息成功");
+            toStatusP("当前显示农场为：" + userName + "的农场");
+        }
+
+        private void lbtnUpdata_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            threadGetUserInfoP = new Thread(new ThreadStart(this.GetUserAndFriends));
+            //threadGetFriendsP.Start();
+            threadGetUserInfoP.Start();
+        }
+
+        private void lbtnGetFriends_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (threadGetFriendsP == null || !threadGetFriendsP.IsAlive)
+            {
+                threadGetFriendsP = new Thread(new ThreadStart(ListFriends));
+                threadGetFriendsP.Start();
+            }
+        }
         #endregion
 
         #region 可操作好友列表操作
@@ -999,7 +1287,6 @@ namespace MyFarm
             {
                 listViewFriendsFilter.Items.Clear();
             });
-            getFriendsFliter();
             string exp = "";
             int level = 0;
             FriendFilterP newFriendsFilter = new FriendFilterP();
@@ -1022,7 +1309,7 @@ namespace MyFarm
                     newFriendsFilter.userId = _friendsFliterP.GetKey(i);
                     newFriendsFilter.doStatus = new DoStatusP(new JsonObject(_friendsFliterP.GetValue(i)));
                     User _friendsInfo = new User(GetUserModel(newFriendsFilter.userId));
-                    exp = _friendsP.GetCollection()[i].GetValue("exp");
+                    exp = _friendsInfo.exp;
                     exp = FormatExpP(Convert.ToInt32(exp), out level);
                     string theDoStatus = newFriendsFilter.doStatus.theDoStatus;
                     dr = dt.NewRow();
@@ -1052,40 +1339,27 @@ namespace MyFarm
                 {
                     listViewFriendsFilter.Items.AddRange(lvitems);
                 });
+                
+            }
+        }
+        #endregion
 
-                /*
-                    for (int i = 0; i < _friendsFliter.GetCollection().Count; i++)
+        #region 处理可操作好友列表
+        private void dealFriendFilter()
+        {
+            FriendFilterP newFriendsFilter = new FriendFilterP();
+            JsonObject tmpJson = new JsonObject();
+            if (_friendsFliterP != null && _friendsFliterP.GetCollection().Count > 0)
+            {
+                for (int i = 0; i < _friendsFliterP.GetCollection().Count; i++)
+                {
+                    newFriendsFilter.doStatus = new DoStatusP(new JsonObject(_friendsFliterP.GetValue(i)));
+                    if(!newFriendsFilter.doStatus.theDoStatus.Equals(""))
                     {
-                        newFriendsFilter.userId = _friendsFliter.GetKey(i);
-                        newFriendsFilter.doStatus = new DoStatus(new JsonObject(_friendsFliter.GetValue(i)));
-                        User _friendsInfo = new User(GetUserModel(newFriendsFilter.userId));
-                        ListViewItem lv = new ListViewItem();
-                        lv.SubItems[0].Text = (i + 1).ToString();
-                        /*
-                        lv.SubItems.Add(_friends.GetCollection()[i].GetValue("userId"));
-                        lv.SubItems.Add(_friends.GetCollection()[i].GetValue("userName"));
-                        exp = _friends.GetCollection()[i].GetValue("exp");
-                        exp = FormatExp(Convert.ToInt32(exp),out level);
-                        lv.SubItems.Add(level.ToString());
-                        lv.SubItems.Add(_friends.GetCollection()[i].GetValue("money"));
-                        lv.SubItems.Add(exp);
-                         */
-                /*
-                        string theDoStatus = newFriendsFilter.doStatus.theDoStatus;
-                        lv.SubItems.Add(_friendsInfo.userId);
-                        lv.SubItems.Add(_friendsInfo.userName);
-                        exp = _friendsInfo.exp;
-                        exp = FormatExp(Convert.ToInt32(exp), out level);
-                        lv.SubItems.Add(level.ToString());
-                        lv.SubItems.Add(_friendsInfo.money);
-                        lv.SubItems.Add(theDoStatus);
-                        lv.SubItems.Add(DateTime.Now.ToString());
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            listViewFriendsFilter.Items.Add(lv);
-                        });
+                        tmpJson.Add(_friendsFliterP.GetKey(i),_friendsFliterP.GetValue(i));
                     }
-                    */
+                }
+                _friendsFliterP = tmpJson;
             }
         }
         #endregion
@@ -1096,35 +1370,40 @@ namespace MyFarm
             if (_friendsFliterP != null)
             {
                 List<string> idList = _friendsFliterP.GetKeys();
-                foreach (string id in idList)
-                {
-                    FriendFilterP newFriendsFilter = new FriendFilterP();
-                    newFriendsFilter = getFriendsDoStatusModel(id);
-                    /*
-                    if (newFriendsFilter.doStatus.theDoStatus.Equals("可偷取") && _autoSteal)
+                if(idList!=null){
+                    foreach (string id in idList)
                     {
-                        LandHarvest(id, GetFUserInfo(id));
+                        FriendFilterP newFriendsFilter = new FriendFilterP();
+                        if ((newFriendsFilter = getFriendsDoStatusModel(id)) != null)
+                        {
+                            if (newFriendsFilter.doStatus.theDoStatus.Equals("可偷取") && _autoStealAnimal)
+                            {
+                                PastureHarvest(id, GetFUserInfo(id));
+                            }
+                            if (newFriendsFilter.doStatus.theDoStatus.Equals("可赶去") && _autoPostProduct)
+                            {
+                                PasturePostProduct(id, GetFUserInfo(id));
+                            }
+                            if (newFriendsFilter.doStatus.theDoStatus.Equals("有蚊便") && _autoKillMosquito)
+                            {
+                                PastureKillMosquitoP(id, GetFUserInfo(id));
+                                PastureGetShitsP(id, GetFUserInfo(id));
+                            }
+                            if (newFriendsFilter.doStatus.theDoStatus.Equals("可收获") && _autoStealAnimal)
+                            {
+                                PastureHarvest(id, GetFUserInfo(id));
+                            }
+                        }
                     }
-                    if (newFriendsFilter.doStatus.theDoStatus.Equals("可除草") && _autoWeed)
-                    {
-                        LandClearWeed(id, GetFUserInfo(id));
-                    }
-                    if (newFriendsFilter.doStatus.theDoStatus.Equals("可除虫") && _autoWorm)
-                    {
-                        LandSpraying(id, GetFUserInfo(id));
-                    }
-                    if (newFriendsFilter.doStatus.theDoStatus.Equals("可浇水") && _autoWater)
-                    {
-                        LandWater(id, GetFUserInfo(id));
-                    }*/
+                    toLogP("可操作好友列表操作完成");
+                    FriendsFliterList();
                 }
 
-                toLogP("可操作好友列表处理完成");
-                FriendsFliterList();
+                
             }
             else
             {
-                toLogP("可操作好友列表处理失败");
+                toLogP("可操作好友列表操作失败");
             }
         }
         #endregion
@@ -1134,9 +1413,30 @@ namespace MyFarm
         {
             getFriendsFliter();
             toLogP("获取可操作好友列表成功");
+            dealFriendFilter();
+            toLogP("可操作好友列表处理成功");
             showFriendsFilter();
         }
         #endregion        
+
+        private void lbtnGetFriendsFilter_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (threadGetFriendsFilterP == null || !threadGetFriendsFilterP.IsAlive)
+            {
+                threadGetFriendsFilterP = new Thread(new ThreadStart(FriendsFliterList));
+                threadGetFriendsFilterP.Start();
+            }
+        }
+
+
+        private void btnPickFriendFilter_Click(object sender, EventArgs e)
+        {
+            if (threadPickFriendsFilterList == null || !threadPickFriendsFilterList.IsAlive)
+            {
+                threadPickFriendsFilterList = new Thread(new ThreadStart(PickFriendsFilterList));
+                threadPickFriendsFilterList.Start();
+            }
+        }
         #endregion
 
         #region 背包信息操作
@@ -1146,6 +1446,90 @@ namespace MyFarm
         #endregion
 
         #region 仓库信息操作
+        private void ShowRepertory()
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                listViewRepertory.Items.Clear();
+            });
+            long allMoney = 0;
+            DataTable dt = new DataTable();
+            DataRow dr;
+            dt.Columns.Add("id", typeof(String));
+            dt.Columns.Add("cId", typeof(String));
+            dt.Columns.Add("cName", typeof(String));
+            dt.Columns.Add("cMoney", typeof(String));
+            dt.Columns.Add("cNum", typeof(String));
+            //dt.Columns.Add("canDoStatus",typeof(String));
+            dt.Columns.Add("totalMoney", typeof(String));
+            dt.Columns.Add("isLock", typeof(String));
+            dt.Columns.Add("lastTime", typeof(String));
+            for (int i = 0; i < _repertoryStatusP.GetCollection().Count; i++)
+            {
+                string cid = _repertoryStatusP.GetCollection()[i].GetValue("cId");
+                string cNum = _repertoryStatusP.GetCollection()[i].GetValue("amount");
+                string lv = _repertoryStatusP.GetCollection()[i].GetValue("lv");
+                string cName = _repertoryStatusP.GetCollection()[i].GetValue("cName");
+                string price = _repertoryStatusP.GetCollection()[i].GetValue("price");
+                long totalMoney = Convert.ToInt32(cNum) * Convert.ToInt32(price);
+                dr = dt.NewRow();
+                dr[0] = (i + 1).ToString();
+                dr[1] = cid;
+                dr[2] = cName;
+                dr[4] = price;
+                dr[5] = cNum;
+                dr[6] = totalMoney;
+                allMoney += totalMoney;
+                dr[3] = lv;
+                dr[7] = DateTime.Now.ToString();
+
+                dt.Rows.Add(dr);
+            }
+            int iSize = (dt.Rows.Count > 1000) ? 1000 : dt.Rows.Count;
+
+            ListViewItem lvi;
+            ListViewItem[] lvitems = new ListViewItem[iSize];
+            for (int i = 0; i < iSize; i++)
+            {
+                lvi = new ListViewItem(new string[] { dt.Rows[i][0].ToString(), dt.Rows[i][1].ToString(), dt.Rows[i][2].ToString(), dt.Rows[i][3].ToString(), dt.Rows[i][4].ToString(), dt.Rows[i][5].ToString(), dt.Rows[i][6].ToString(), dt.Rows[i][7].ToString() });
+                lvitems[i] = lvi;
+            }
+            this.Invoke((MethodInvoker)delegate
+            {
+                listViewRepertory.Items.AddRange(lvitems);
+                lblTotalMoney.Text = "总价值为：" + allMoney + "金币";
+            });
+        }
+
+        #region 仓库信息
+        private void GetRepertoryInfoThread()
+        {
+            GetRepertoryInfoP();
+            ShowRepertory();
+        }
+        #endregion
+
+
+        private void lbtnGetRepertory_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Thread threadGetRepertory = new Thread(new ThreadStart(GetRepertoryInfoThread));
+            threadGetRepertory.Start();
+        }
+
+
+        private void listViewRepertory_DoubleClick(object sender, EventArgs e)
+        {
+            //获得当前行 
+            int iRowCurr = this.listViewRepertory.SelectedItems[0].Index;
+            //取得当前行的数据 
+            string cid = listViewRepertory.SelectedItems[0].SubItems[1].Text;
+            string cName = listViewRepertory.SelectedItems[0].SubItems[2].Text;
+            string cNum = listViewRepertory.SelectedItems[0].SubItems[5].Text;
+            SellProduct(cid, cName, cNum);
+            GetRepertoryInfoP();
+            ShowRepertory();
+            toLogP("出售" + cName + "成功");
+        }      
         #endregion
 
         #region 动物成长信息操作
@@ -1157,17 +1541,17 @@ namespace MyFarm
            
         }
 
-                private void configSaveP()
+        private void configSaveP()
         {
             
         }
 
-                private void configApplyP()
+        private void configApplyP()
         {
             
         }
 
-                private void configShowP()
+        private void configShowP()
         {
             
         }
@@ -1177,46 +1561,258 @@ namespace MyFarm
         #endregion
 
         #region 状态栏、日志操作
-            private void toStatusP(string msg)
+        private void toStatusP(string msg)
+        {
+            this.Invoke((MethodInvoker)delegate
             {
-                this.Invoke((MethodInvoker)delegate
+                lblStatus.Text = msg;
+            });
+        }
+
+        private void toLogP(string msg)
+        {
+            string strToLog = DateTime.Now.ToString() + "  " + msg + "\n";
+            this.Invoke((MethodInvoker)delegate
+            {
+                richTextBoxLog.AppendText(strToLog);
+                //让文本框获取焦点 
+                richTextBoxLog.Focus();
+                //设置光标的位置到文本尾 
+                richTextBoxLog.Select(richTextBoxLog.TextLength - 1, 0);
+                //滚动到控件光标处 
+                richTextBoxLog.ScrollToCaret();
+            });
+        }
+
+
+        private void lbtnClearLog_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            richTextBoxLog.Clear();
+        }
+        #endregion
+
+        #region 刷经验
+            private void lbtnPastureExp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+            {
+                if (lbtnPastureExp.Text.Equals("刷牧场经验"))
                 {
-                    lblStatus.Text = msg;
-                });
+                    pastureExpTimes = Convert.ToInt32(txtPastureExpTimes.Text);
+                    autoExp = true;
+                    lbtnPastureExp.Text = "停止刷牧场经验";
+                }
+                else
+                {
+                    autoExp = false;
+                    lbtnPastureExp.Text = "刷牧场经验";
+                }
+                timer5.Enabled = autoExp;
             }
 
-            private void toLogP(string msg)
+            private void PastureExp()
             {
-                string strToLog = DateTime.Now.ToString() + "  " + msg + "\n";
+                string url = runUrl + "/bbs/source/plugin/qqfarm/core/mymc.php?mod=cgi_help_pasture";
+                //string postData = "num=100&pos=0&type=1";
+                string farmTime = TheKey.GetFarmTime();
+                string pastureKey = TheKey.GetPastureKey(farmTime, pastureKeyEncodeString);
+                string postData = "uId=1&farmTime=" + farmTime + "&pos=1&num=100"
+                    + "&pastureKey=" + pastureKey + "&farmKey=null&type=1&uIdx=" + uIdx;
+                string content = "";
+                try
+                {
+                    content = HttpChinese.GetHtml(postData, cookie, url);
+                }
+                catch (Exception e)
+                {
+                    toLogP(e.Message);
+                    toLogP("拍死蚊子失败");
+                }
+                string getExp = new JsonObject(content).GetValue("addExp");
+                autoExp = getExp.Equals("0") ? false : true;
+                if (autoExp)
+                {
+                    toLogP("获取成功" + getExp + "点经验");
+                }
+                else
+                {
+                    toLogP("经验已满，停止工作");
+                }
+            }
+
+            private void PastureExp2()
+            {
+                string serial = "";
                 this.Invoke((MethodInvoker)delegate
                 {
-                    richTextBoxLog.AppendText(strToLog);
-                    //让文本框获取焦点 
-                    richTextBoxLog.Focus();
-                    //设置光标的位置到文本尾 
-                    richTextBoxLog.Select(richTextBoxLog.TextLength - 1, 0);
-                    //滚动到控件光标处 
-                    richTextBoxLog.ScrollToCaret();
+                    serial = txtSerialNum.Text.Trim();
                 });
+                BuyAnimalP(cIdP, 1);
+                DonateAnimal(serial);
+            }
+
+            private void timer5_Tick(object sender, EventArgs e)
+            {
+                if (autoExp && pastureExpTimes > 0)
+                {
+                    if (threadTest == null || !threadTest.IsAlive)
+                    {
+                        threadTest = new Thread(new ThreadStart(PastureExp2));
+                        threadTest.Start();
+                        pastureExpTimes--;
+                    }
+                }
+                else if (pastureExpTimes == 0)
+                {
+                    toLogP("刷经验完成");
+                    pastureExpTimes = -1;
+                    autoExp = false;
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        lbtnPastureExp.Text = "刷牧场经验";
+                    });
+                }
             }
         #endregion
 
-        private void btnGetGift_Click(object sender, EventArgs e)
+
+        //工作方式2定时器
+        private void timer4_Tick(object sender, EventArgs e)
+        {
+            timeRunFriends--;
+            if (timeRunFriends <= 0)
             {
-                btnGetGift.Enabled = false;
-                Thread newThread = new Thread(new ThreadStart(GetVipGiftP));
-                newThread.Start();
-                btnGetGift.Enabled = true;
+                threadGetFriendsP = new Thread(new ThreadStart(ListFriends));
+                threadGetFriendsP.Start();
+                timeRunFriends = Convert.ToInt32(txtTimeFriends.Text.Trim());
+            }
+            timeGetFriendsFilter--;
+            if (timeGetFriendsFilter <= 0)
+            {
+                if (threadGetFriendsP == null || !threadGetFriendsP.IsAlive)
+                {
+                    threadGetFriendsFilterP = new Thread(new ThreadStart(FriendsFliterList));
+                    threadGetFriendsFilterP.Start();
+                    timeGetFriendsFilter = Convert.ToInt32(txtGetFriendsFilter.Text.Trim());
+                }
+            }
+            if (_autoWorkTime < timeToWork)
+            {
+                //61s进行一次采摘
+                if (_autoWorkTime % 31 == 0)
+                {
+                    if ((threadGetFriendsFilterP == null) || (!threadGetFriendsFilterP.IsAlive))
+                    {
+                        threadPickFriendsFilterList = new Thread(new ThreadStart(PickFriendsFilterList));
+                        threadPickFriendsFilterList.Start();
+                    }
+                }
+                _autoWorkTime++;
+            }
+            else
+            {
+                if (_restTime < timeToRest)
+                {
+                    _restTime++;
+                }
+                else
+                {
+                    _autoWorkTime = 0;
+                    _restTime = 0;
+                }
+            }
+        }
+        //用户信息刷新
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            if (timeUserInfoGo >= _userInfoUpTime)
+            {
+                threadGetUserInfoP = new Thread(new ThreadStart(GetUserAndFriends));
+                threadGetUserInfoP.Start();
+                timeUserInfoGo = 0;
+            }
+            timeUserInfoGo++;
+        }
+        //状态栏显示定时器
+        private void timer3_Tick(object sender, EventArgs e)
+        {
+            //"                                                                软件已经工作*小时*分钟*秒，休息*小时*分钟*秒;现在时间是2011年1月1日 1:01:01";
+            string timeNow = "现在时间是" + DateTime.Now.ToString();
+            string timeWork = "软件已经工作" + TimeFormat.FormatTimeToHHMMSS(_autoWorkTime) + ",休息" + TimeFormat.FormatTimeToHHMMSS(_restTime);
+            lblTime.Text = "                                                                " + timeWork + ";" + timeNow;
+            /*
+            if ((TimeFormat.FormatTime(DateTime.Now)) % 30 == 0)
+            {
+                threadShowAch = new Thread(new ThreadStart(showAch));
+                if (!threadShowAch.IsAlive) { threadShowAch.Start(); }
+            }
+                * */
+        }
+
+        private void btnGetGift_Click(object sender, EventArgs e)
+        {
+            btnGetGift.Enabled = false;
+            Thread newThread = new Thread(new ThreadStart(GetVipGiftP));
+            newThread.Start();
+            btnGetGift.Enabled = true;
+        }                
+
+        private void btnHarvest_Click(object sender, EventArgs e)
+        {
+            btnHarvest.Enabled = false;
+            PastureHarvest(showIdP, _pastureStatus);
+            _pastureStatus = GetFUserInfo(showIdP);
+            showAnimalInfo(_pastureStatus);
+            btnHarvest.Enabled = true;
+        }
+
+        private void btnPostProduct_Click(object sender, EventArgs e)
+        {
+            btnPostProduct.Enabled = false;
+            PasturePostProduct(showIdP, _pastureStatus);
+            _pastureStatus = GetFUserInfo(showIdP);
+            showAnimalInfo(_pastureStatus);
+            btnPostProduct.Enabled = true;
+        }
+
+        private void btnKillMosquitoP_Click(object sender, EventArgs e)
+        {
+            btnKillMosquitoP.Enabled = false;
+            PastureKillMosquitoP(showIdP, _pastureStatus);
+            _pastureStatus = GetFUserInfo(showIdP);
+            showAnimalInfo(_pastureStatus);
+            btnKillMosquitoP.Enabled = true;
+        }
+
+        private void btnGetShitsP_Click(object sender, EventArgs e)
+        {
+            btnGetShitsP.Enabled = false;
+            PastureGetShitsP(showIdP, _pastureStatus);
+            _pastureStatus = GetFUserInfo(showIdP);
+            showAnimalInfo(_pastureStatus);
+            btnGetShitsP.Enabled = true;
+        }
+        
+        private void btnAuto2_Click(object sender, EventArgs e)
+        {
+            if (btnAuto2.Text.Equals("工作方式2"))
+            {
+                btnAuto2.Text = "停止";
+                _autoWookBool = true;
+                _autoWorkTime = 0;
+                configApplyP();
+            }
+            else
+            {
+                btnAuto2.Text = "工作方式2";
+                _autoWookBool = false;
             }
 
-        private void lbtnGetFriendsFilter_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+            timer4.Enabled = _autoWookBool;
+        }
+
+        private void btnBuyAnimalP_Click(object sender, EventArgs e)
         {
-            if (threadGetFriendsFilterP == null || !threadGetFriendsFilterP.IsAlive)
-            {
-                threadGetFriendsFilterP = new Thread(new ThreadStart(FriendsFliterList));
-                threadGetFriendsFilterP.Start();
-            }
-        }           
+            BuyAnimalP(cIdP, 1);
+        }       
 
     }
 }

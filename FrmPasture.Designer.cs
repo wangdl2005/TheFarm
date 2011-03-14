@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnGetGift = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
@@ -98,9 +99,8 @@
             this.lbtnClearLog = new System.Windows.Forms.LinkLabel();
             this.richTextBoxLog = new System.Windows.Forms.RichTextBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.txtFarmExpTimes = new System.Windows.Forms.TextBox();
-            this.lbtnFarmExp = new System.Windows.Forms.LinkLabel();
+            this.txtPastureExpTimes = new System.Windows.Forms.TextBox();
+            this.lbtnPastureExp = new System.Windows.Forms.LinkLabel();
             this.listViewFarmland = new System.Windows.Forms.ListView();
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -113,6 +113,7 @@
             this.btnPickFriendFilter = new System.Windows.Forms.Button();
             this.btnAuto2 = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.btnPostProduct = new System.Windows.Forms.Button();
             this.btnDoAllP = new System.Windows.Forms.Button();
             this.btnBuyAnimalP = new System.Windows.Forms.Button();
             this.btnRaiseBeastP = new System.Windows.Forms.Button();
@@ -156,6 +157,13 @@
             this.chbBag = new System.Windows.Forms.CheckBox();
             this.chbSeed = new System.Windows.Forms.CheckBox();
             this.btnAuto = new System.Windows.Forms.Button();
+            this.timer5 = new System.Windows.Forms.Timer(this.components);
+            this.timer4 = new System.Windows.Forms.Timer(this.components);
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.timer3 = new System.Windows.Forms.Timer(this.components);
+            this.label17 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.txtSerialNum = new System.Windows.Forms.TextBox();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picHead)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -207,7 +215,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(61, 81);
+            this.label7.Location = new System.Drawing.Point(61, 48);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(41, 12);
             this.label7.TabIndex = 22;
@@ -216,7 +224,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(61, 62);
+            this.label6.Location = new System.Drawing.Point(14, 68);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(41, 12);
             this.label6.TabIndex = 21;
@@ -225,7 +233,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(61, 40);
+            this.label5.Location = new System.Drawing.Point(14, 87);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(41, 12);
             this.label5.TabIndex = 20;
@@ -259,6 +267,7 @@
             this.lbtnUpdata.TabIndex = 17;
             this.lbtnUpdata.TabStop = true;
             this.lbtnUpdata.Text = "更新";
+            this.lbtnUpdata.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbtnUpdata_LinkClicked);
             // 
             // picHead
             // 
@@ -273,7 +282,7 @@
             // lblLevel
             // 
             this.lblLevel.AutoSize = true;
-            this.lblLevel.Location = new System.Drawing.Point(108, 81);
+            this.lblLevel.Location = new System.Drawing.Point(108, 48);
             this.lblLevel.Name = "lblLevel";
             this.lblLevel.Size = new System.Drawing.Size(17, 12);
             this.lblLevel.TabIndex = 14;
@@ -291,7 +300,7 @@
             // lblExp
             // 
             this.lblExp.AutoSize = true;
-            this.lblExp.Location = new System.Drawing.Point(99, 62);
+            this.lblExp.Location = new System.Drawing.Point(88, 68);
             this.lblExp.Name = "lblExp";
             this.lblExp.Size = new System.Drawing.Size(17, 12);
             this.lblExp.TabIndex = 16;
@@ -300,7 +309,7 @@
             // lblMoney
             // 
             this.lblMoney.AutoSize = true;
-            this.lblMoney.Location = new System.Drawing.Point(108, 40);
+            this.lblMoney.Location = new System.Drawing.Point(99, 87);
             this.lblMoney.Name = "lblMoney";
             this.lblMoney.Size = new System.Drawing.Size(17, 12);
             this.lblMoney.TabIndex = 15;
@@ -339,6 +348,7 @@
             this.lbtnGetFriends.TabIndex = 1;
             this.lbtnGetFriends.TabStop = true;
             this.lbtnGetFriends.Text = "获取好友列表";
+            this.lbtnGetFriends.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbtnGetFriends_LinkClicked);
             // 
             // listViewFriends
             // 
@@ -360,6 +370,7 @@
             this.listViewFriends.TabIndex = 0;
             this.listViewFriends.UseCompatibleStateImageBehavior = false;
             this.listViewFriends.View = System.Windows.Forms.View.Details;
+            this.listViewFriends.DoubleClick += new System.EventHandler(this.listViewFriends_DoubleClick);
             // 
             // columnHeader1
             // 
@@ -626,6 +637,7 @@
             this.lbtnGetRepertory.TabIndex = 2;
             this.lbtnGetRepertory.TabStop = true;
             this.lbtnGetRepertory.Text = "获取仓库信息";
+            this.lbtnGetRepertory.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbtnGetRepertory_LinkClicked);
             // 
             // lbtnSellUnlocked
             // 
@@ -657,6 +669,7 @@
             this.listViewRepertory.TabIndex = 0;
             this.listViewRepertory.UseCompatibleStateImageBehavior = false;
             this.listViewRepertory.View = System.Windows.Forms.View.Details;
+            this.listViewRepertory.DoubleClick += new System.EventHandler(this.listViewRepertory_DoubleClick);
             // 
             // columnHeader29
             // 
@@ -665,41 +678,42 @@
             // 
             // columnHeader30
             // 
-            this.columnHeader30.Text = "作物ID";
+            this.columnHeader30.Text = "动物ID";
             this.columnHeader30.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // columnHeader31
             // 
-            this.columnHeader31.Text = "作物名";
+            this.columnHeader31.Text = "动物名";
             this.columnHeader31.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.columnHeader31.Width = 80;
             // 
             // columnHeader32
             // 
-            this.columnHeader32.Text = "价格";
+            this.columnHeader32.Text = "等级";
             this.columnHeader32.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader32.Width = 40;
             // 
             // columnHeader33
             // 
-            this.columnHeader33.Text = "数量";
+            this.columnHeader33.Text = "价格";
             this.columnHeader33.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // columnHeader34
             // 
-            this.columnHeader34.Text = "总值";
+            this.columnHeader34.Text = "数量";
             this.columnHeader34.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.columnHeader34.Width = 70;
             // 
             // columnHeader35
             // 
-            this.columnHeader35.Text = "是否锁定";
+            this.columnHeader35.Text = "总值";
             this.columnHeader35.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader35.Width = 70;
             // 
             // columnHeader36
             // 
             this.columnHeader36.Text = "最后更新时间";
             this.columnHeader36.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.columnHeader36.Width = 120;
+            this.columnHeader36.Width = 130;
             // 
             // statusStrip1
             // 
@@ -773,6 +787,7 @@
             this.lbtnClearLog.TabIndex = 32;
             this.lbtnClearLog.TabStop = true;
             this.lbtnClearLog.Text = "清除日志";
+            this.lbtnClearLog.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbtnClearLog_LinkClicked);
             // 
             // richTextBoxLog
             // 
@@ -785,9 +800,11 @@
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.label17);
+            this.groupBox7.Controls.Add(this.txtPastureExpTimes);
             this.groupBox7.Controls.Add(this.label16);
-            this.groupBox7.Controls.Add(this.txtFarmExpTimes);
-            this.groupBox7.Controls.Add(this.lbtnFarmExp);
+            this.groupBox7.Controls.Add(this.txtSerialNum);
+            this.groupBox7.Controls.Add(this.lbtnPastureExp);
             this.groupBox7.Controls.Add(this.listViewFarmland);
             this.groupBox7.Location = new System.Drawing.Point(191, 12);
             this.groupBox7.Name = "groupBox7";
@@ -796,32 +813,24 @@
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "牧场信息";
             // 
-            // label16
+            // txtPastureExpTimes
             // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(239, 2);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(41, 12);
-            this.label16.TabIndex = 3;
-            this.label16.Text = "次数：";
+            this.txtPastureExpTimes.Location = new System.Drawing.Point(293, -3);
+            this.txtPastureExpTimes.Name = "txtPastureExpTimes";
+            this.txtPastureExpTimes.Size = new System.Drawing.Size(52, 21);
+            this.txtPastureExpTimes.TabIndex = 2;
+            this.txtPastureExpTimes.Text = "100";
             // 
-            // txtFarmExpTimes
+            // lbtnPastureExp
             // 
-            this.txtFarmExpTimes.Location = new System.Drawing.Point(294, -1);
-            this.txtFarmExpTimes.Name = "txtFarmExpTimes";
-            this.txtFarmExpTimes.Size = new System.Drawing.Size(52, 21);
-            this.txtFarmExpTimes.TabIndex = 2;
-            this.txtFarmExpTimes.Text = "100";
-            // 
-            // lbtnFarmExp
-            // 
-            this.lbtnFarmExp.AutoSize = true;
-            this.lbtnFarmExp.Location = new System.Drawing.Point(359, 2);
-            this.lbtnFarmExp.Name = "lbtnFarmExp";
-            this.lbtnFarmExp.Size = new System.Drawing.Size(65, 12);
-            this.lbtnFarmExp.TabIndex = 1;
-            this.lbtnFarmExp.TabStop = true;
-            this.lbtnFarmExp.Text = "刷农场经验";
+            this.lbtnPastureExp.AutoSize = true;
+            this.lbtnPastureExp.Location = new System.Drawing.Point(351, 0);
+            this.lbtnPastureExp.Name = "lbtnPastureExp";
+            this.lbtnPastureExp.Size = new System.Drawing.Size(65, 12);
+            this.lbtnPastureExp.TabIndex = 1;
+            this.lbtnPastureExp.TabStop = true;
+            this.lbtnPastureExp.Text = "刷牧场经验";
+            this.lbtnPastureExp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbtnPastureExp_LinkClicked);
             // 
             // listViewFarmland
             // 
@@ -843,42 +852,41 @@
             // 
             // columnHeader8
             // 
-            this.columnHeader8.Text = "土地";
+            this.columnHeader8.Text = "编号";
             this.columnHeader8.Width = 40;
             // 
             // columnHeader9
             // 
-            this.columnHeader9.Text = "农作物";
+            this.columnHeader9.Text = "动物";
             this.columnHeader9.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader9.Width = 50;
             // 
             // columnHeader10
             // 
-            this.columnHeader10.Text = "杂草";
+            this.columnHeader10.Text = "成长阶段";
             this.columnHeader10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.columnHeader10.Width = 40;
             // 
             // columnHeader11
             // 
-            this.columnHeader11.Text = "虫子";
+            this.columnHeader11.Text = "领养时间";
             this.columnHeader11.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.columnHeader11.Width = 40;
             // 
             // columnHeader12
             // 
-            this.columnHeader12.Text = "干旱";
+            this.columnHeader12.Text = "下次操作时间";
             this.columnHeader12.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.columnHeader12.Width = 40;
+            this.columnHeader12.Width = 120;
             // 
             // columnHeader13
             // 
             this.columnHeader13.Text = "状态";
             this.columnHeader13.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader13.Width = 50;
             // 
             // columnHeader14
             // 
-            this.columnHeader14.Text = "成熟时间";
+            this.columnHeader14.Text = "已产量";
             this.columnHeader14.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.columnHeader14.Width = 120;
             // 
             // panel1
             // 
@@ -902,6 +910,7 @@
             this.btnPickFriendFilter.TabIndex = 29;
             this.btnPickFriendFilter.Text = "操作可操作好友";
             this.btnPickFriendFilter.UseVisualStyleBackColor = true;
+            this.btnPickFriendFilter.Click += new System.EventHandler(this.btnPickFriendFilter_Click);
             // 
             // btnAuto2
             // 
@@ -911,9 +920,11 @@
             this.btnAuto2.TabIndex = 28;
             this.btnAuto2.Text = "工作方式2";
             this.btnAuto2.UseVisualStyleBackColor = true;
+            this.btnAuto2.Click += new System.EventHandler(this.btnAuto2_Click);
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.btnPostProduct);
             this.groupBox4.Controls.Add(this.btnDoAllP);
             this.groupBox4.Controls.Add(this.btnBuyAnimalP);
             this.groupBox4.Controls.Add(this.btnRaiseBeastP);
@@ -928,13 +939,23 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "农场操作";
             // 
+            // btnPostProduct
+            // 
+            this.btnPostProduct.Location = new System.Drawing.Point(8, 21);
+            this.btnPostProduct.Name = "btnPostProduct";
+            this.btnPostProduct.Size = new System.Drawing.Size(75, 23);
+            this.btnPostProduct.TabIndex = 7;
+            this.btnPostProduct.Text = "赶产";
+            this.btnPostProduct.UseVisualStyleBackColor = true;
+            this.btnPostProduct.Click += new System.EventHandler(this.btnPostProduct_Click);
+            // 
             // btnDoAllP
             // 
-            this.btnDoAllP.Location = new System.Drawing.Point(7, 79);
+            this.btnDoAllP.Location = new System.Drawing.Point(93, 79);
             this.btnDoAllP.Name = "btnDoAllP";
-            this.btnDoAllP.Size = new System.Drawing.Size(244, 23);
+            this.btnDoAllP.Size = new System.Drawing.Size(158, 23);
             this.btnDoAllP.TabIndex = 6;
-            this.btnDoAllP.Text = "一键收获、偷取、打蚊子、拾大便";
+            this.btnDoAllP.Text = "一键操作";
             this.btnDoAllP.UseVisualStyleBackColor = true;
             // 
             // btnBuyAnimalP
@@ -945,10 +966,11 @@
             this.btnBuyAnimalP.TabIndex = 5;
             this.btnBuyAnimalP.Text = "买幼仔";
             this.btnBuyAnimalP.UseVisualStyleBackColor = true;
+            this.btnBuyAnimalP.Click += new System.EventHandler(this.btnBuyAnimalP_Click);
             // 
             // btnRaiseBeastP
             // 
-            this.btnRaiseBeastP.Location = new System.Drawing.Point(93, 48);
+            this.btnRaiseBeastP.Location = new System.Drawing.Point(8, 79);
             this.btnRaiseBeastP.Name = "btnRaiseBeastP";
             this.btnRaiseBeastP.Size = new System.Drawing.Size(75, 23);
             this.btnRaiseBeastP.TabIndex = 4;
@@ -957,7 +979,7 @@
             // 
             // btnFightMouseP
             // 
-            this.btnFightMouseP.Location = new System.Drawing.Point(7, 49);
+            this.btnFightMouseP.Location = new System.Drawing.Point(93, 49);
             this.btnFightMouseP.Name = "btnFightMouseP";
             this.btnFightMouseP.Size = new System.Drawing.Size(75, 23);
             this.btnFightMouseP.TabIndex = 3;
@@ -972,6 +994,7 @@
             this.btnGetShitsP.TabIndex = 2;
             this.btnGetShitsP.Text = "拾大便";
             this.btnGetShitsP.UseVisualStyleBackColor = true;
+            this.btnGetShitsP.Click += new System.EventHandler(this.btnGetShitsP_Click);
             // 
             // btnKillMosquitoP
             // 
@@ -981,15 +1004,17 @@
             this.btnKillMosquitoP.TabIndex = 1;
             this.btnKillMosquitoP.Text = "打蚊子";
             this.btnKillMosquitoP.UseVisualStyleBackColor = true;
+            this.btnKillMosquitoP.Click += new System.EventHandler(this.btnKillMosquitoP_Click);
             // 
             // btnHarvest
             // 
-            this.btnHarvest.Location = new System.Drawing.Point(7, 21);
+            this.btnHarvest.Location = new System.Drawing.Point(8, 49);
             this.btnHarvest.Name = "btnHarvest";
             this.btnHarvest.Size = new System.Drawing.Size(75, 23);
             this.btnHarvest.TabIndex = 0;
             this.btnHarvest.Text = "收获";
             this.btnHarvest.UseVisualStyleBackColor = true;
+            this.btnHarvest.Click += new System.EventHandler(this.btnHarvest_Click);
             // 
             // btnPickMature
             // 
@@ -1368,6 +1393,53 @@
             this.btnAuto.Text = "工作方式1";
             this.btnAuto.UseVisualStyleBackColor = true;
             // 
+            // timer5
+            // 
+            this.timer5.Interval = 1000;
+            this.timer5.Tick += new System.EventHandler(this.timer5_Tick);
+            // 
+            // timer4
+            // 
+            this.timer4.Interval = 1000;
+            this.timer4.Tick += new System.EventHandler(this.timer4_Tick);
+            // 
+            // timer2
+            // 
+            this.timer2.Interval = 1000;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
+            // timer3
+            // 
+            this.timer3.Interval = 1000;
+            this.timer3.Tick += new System.EventHandler(this.timer3_Tick);
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(146, 1);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(17, 12);
+            this.label17.TabIndex = 38;
+            this.label17.Text = "第";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(204, 1);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(83, 12);
+            this.label16.TabIndex = 36;
+            this.label16.Text = "块地   次数：";
+            // 
+            // txtSerialNum
+            // 
+            this.txtSerialNum.Location = new System.Drawing.Point(169, -2);
+            this.txtSerialNum.Name = "txtSerialNum";
+            this.txtSerialNum.Size = new System.Drawing.Size(29, 21);
+            this.txtSerialNum.TabIndex = 37;
+            this.txtSerialNum.Text = "7";
+            this.txtSerialNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
             // FrmPasture
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1485,9 +1557,8 @@
         private System.Windows.Forms.LinkLabel lbtnClearLog;
         private System.Windows.Forms.RichTextBox richTextBoxLog;
         private System.Windows.Forms.GroupBox groupBox7;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.TextBox txtFarmExpTimes;
-        private System.Windows.Forms.LinkLabel lbtnFarmExp;
+        private System.Windows.Forms.TextBox txtPastureExpTimes;
+        private System.Windows.Forms.LinkLabel lbtnPastureExp;
         private System.Windows.Forms.ListView listViewFarmland;
         private System.Windows.Forms.ColumnHeader columnHeader8;
         private System.Windows.Forms.ColumnHeader columnHeader9;
@@ -1543,5 +1614,13 @@
         private System.Windows.Forms.CheckBox chbBag;
         private System.Windows.Forms.CheckBox chbSeed;
         private System.Windows.Forms.Button btnAuto;
+        private System.Windows.Forms.Timer timer5;
+        private System.Windows.Forms.Button btnPostProduct;
+        private System.Windows.Forms.Timer timer4;
+        private System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.Timer timer3;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.TextBox txtSerialNum;
     }
 }

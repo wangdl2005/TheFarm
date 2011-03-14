@@ -344,9 +344,21 @@ namespace TheStatus
         public string cId
         { get { return PastureStatus.GetValue("cId"); } }
         public string growTime
-        { get { return PastureStatus.GetValue("growTime"); } }
+        {
+            get
+            {
+                string tmp = PastureStatus.GetValue("growTime");
+                return tmp.Contains(".") ? tmp.Split('.')[0] : tmp;
+            }
+        }
         public string growTimeNext
-        { get { return PastureStatus.GetValue("growTimeNext"); } }
+        { 
+            get
+            {
+                string tmp = PastureStatus.GetValue("growTimeNext");
+                return tmp.Contains(".") ? tmp.Split('.')[0] : tmp;
+            } 
+        }
         public string hungry
         { get { return PastureStatus.GetValue("hungry"); } }
         public string serial
@@ -372,6 +384,22 @@ namespace TheStatus
         { get; set; }
     }
 
+    class BadInfo
+    {
+        JsonObject badInfoJson = new JsonObject();
+        public BadInfo(JsonObject theBadInfo)
+        {
+            this.badInfoJson = theBadInfo;
+        }
+        public string numOfMosquito
+        {
+            get { return badInfoJson.GetCollection()[0].GetValue("num"); }
+        }
+        public string numOfShit
+        {
+            get { return badInfoJson.GetCollection()[1].GetValue("num"); }
+        }
+    }
     class DoStatusP
     {
         JsonObject doStatusInfo = new JsonObject();
@@ -385,24 +413,16 @@ namespace TheStatus
             {
                 return !doStatusInfo.GetValue("t").Equals("0") ? "可偷取" :
                        (
-                            !doStatusInfo.GetValue("g").Equals("0") ? "可抓去" :
+                            !doStatusInfo.GetValue("g").Equals("0") ? "可赶去" :
                             (
-                                !doStatusInfo.GetValue("p").Equals("0") ? "可打蚊" :
+                                !doStatusInfo.GetValue("p").Equals("0") ? "有蚊便" :
                                 (
-                                    !doStatusInfo.GetValue("b").Equals("0") ? "可拾取" : ""
+                                    !doStatusInfo.GetValue("b").Equals("0") ? "" : ""
                                 )
                             )
                        );
             }
         }
-        public string harvestStatus
-        { get { return doStatusInfo.ContainsKey("1") ? "可偷取" : ""; ;} }
-        public string weedStatus
-        { get { return doStatusInfo.ContainsKey("2") ? "可除草" : ""; ;} }
-        public string wormStatus
-        { get { return doStatusInfo.ContainsKey("3") ? "可除虫" : ""; ;} }
-        public string waterStatus
-        { get { return doStatusInfo.ContainsKey("4") ? "可浇水" : ""; ;} }
     }
 
     class DoResultP

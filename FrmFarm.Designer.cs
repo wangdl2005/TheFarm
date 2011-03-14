@@ -117,7 +117,9 @@
             this.txtAch = new System.Windows.Forms.RichTextBox();
             this.lbtnClearLog = new System.Windows.Forms.LinkLabel();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.label17 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
+            this.txtPlaceNum = new System.Windows.Forms.TextBox();
             this.txtFarmExpTimes = new System.Windows.Forms.TextBox();
             this.lbtnFarmExp = new System.Windows.Forms.LinkLabel();
             this.listViewFarmland = new System.Windows.Forms.ListView();
@@ -164,6 +166,7 @@
             this.timer3 = new System.Windows.Forms.Timer(this.components);
             this.timer4 = new System.Windows.Forms.Timer(this.components);
             this.timer5 = new System.Windows.Forms.Timer(this.components);
+            this.btnBuySeed = new System.Windows.Forms.Button();
             this.groupBox3.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -432,6 +435,7 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.btnBuySeed);
             this.groupBox4.Controls.Add(this.btnDoAll);
             this.groupBox4.Controls.Add(this.btnPlant);
             this.groupBox4.Controls.Add(this.btnScarify);
@@ -450,9 +454,9 @@
             // 
             this.btnDoAll.Location = new System.Drawing.Point(7, 79);
             this.btnDoAll.Name = "btnDoAll";
-            this.btnDoAll.Size = new System.Drawing.Size(244, 23);
+            this.btnDoAll.Size = new System.Drawing.Size(161, 23);
             this.btnDoAll.TabIndex = 6;
-            this.btnDoAll.Text = "一键收获、除草、除虫、浇水、锄地、播种";
+            this.btnDoAll.Text = "一键操作";
             this.btnDoAll.UseVisualStyleBackColor = true;
             this.btnDoAll.Click += new System.EventHandler(this.btnDoAll_Click);
             // 
@@ -1032,7 +1036,9 @@
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.label17);
             this.groupBox7.Controls.Add(this.label16);
+            this.groupBox7.Controls.Add(this.txtPlaceNum);
             this.groupBox7.Controls.Add(this.txtFarmExpTimes);
             this.groupBox7.Controls.Add(this.lbtnFarmExp);
             this.groupBox7.Controls.Add(this.listViewFarmland);
@@ -1043,22 +1049,41 @@
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "农场信息";
             // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(169, 2);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(17, 12);
+            this.label17.TabIndex = 35;
+            this.label17.Text = "第";
+            // 
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(239, 2);
+            this.label16.Location = new System.Drawing.Point(227, 2);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(41, 12);
+            this.label16.Size = new System.Drawing.Size(83, 12);
             this.label16.TabIndex = 3;
-            this.label16.Text = "次数：";
+            this.label16.Text = "块地   次数：";
+            // 
+            // txtPlaceNum
+            // 
+            this.txtPlaceNum.Location = new System.Drawing.Point(192, -1);
+            this.txtPlaceNum.Name = "txtPlaceNum";
+            this.txtPlaceNum.Size = new System.Drawing.Size(29, 21);
+            this.txtPlaceNum.TabIndex = 34;
+            this.txtPlaceNum.Text = "7";
+            this.txtPlaceNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // txtFarmExpTimes
             // 
-            this.txtFarmExpTimes.Location = new System.Drawing.Point(294, -1);
+            this.txtFarmExpTimes.Location = new System.Drawing.Point(316, -1);
             this.txtFarmExpTimes.Name = "txtFarmExpTimes";
-            this.txtFarmExpTimes.Size = new System.Drawing.Size(52, 21);
+            this.txtFarmExpTimes.Size = new System.Drawing.Size(37, 21);
             this.txtFarmExpTimes.TabIndex = 2;
             this.txtFarmExpTimes.Text = "100";
+            this.txtFarmExpTimes.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // lbtnFarmExp
             // 
@@ -1435,6 +1460,16 @@
             this.timer5.Interval = 1000;
             this.timer5.Tick += new System.EventHandler(this.timer5_Tick);
             // 
+            // btnBuySeed
+            // 
+            this.btnBuySeed.Location = new System.Drawing.Point(176, 77);
+            this.btnBuySeed.Name = "btnBuySeed";
+            this.btnBuySeed.Size = new System.Drawing.Size(75, 23);
+            this.btnBuySeed.TabIndex = 7;
+            this.btnBuySeed.Text = "购买种子";
+            this.btnBuySeed.UseVisualStyleBackColor = true;
+            this.btnBuySeed.Click += new System.EventHandler(this.btnBuySeed_Click);
+            // 
             // FrmFarm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1617,5 +1652,8 @@
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.TextBox txtFarmExpTimes;
         private System.Windows.Forms.Label lblTotalMoney;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.TextBox txtPlaceNum;
+        private System.Windows.Forms.Button btnBuySeed;
     }
 }
